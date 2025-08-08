@@ -7,6 +7,14 @@ table { border-collapse: collapse; width: 100%; margin-bottom: 30px; table-layou
 th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 40px; min-height: 40px; }
 tr { height: 40px; }
 
+/* Adjust font sizes based on row type to improve readability relative to cell height */
+/* Larger font for day-of-week header */
+th strong { font-size: 16px; }
+/* Larger font for date numbers */
+tbody tr.date-row td strong { font-size: 14px; }
+/* Slightly smaller font for helper rows to fit within the same height */
+tr.team1 td, tr.team2 td, tr.staff td { font-size: 12px; }
+
 /* team colours */
 /* Updated team colours */
 tr.team1 { background-color: #C9E4DE; }
@@ -19,7 +27,8 @@ tbody tr.date-row td:last-child strong { color: blue; }
 
 h2 {
   /* Remove standalone border and radius; provide separation line below title */
-  margin-top: 30px;
+  /* Reduce the space above the title to minimize empty area */
+  margin-top: 0;
   margin-bottom: 0;
   padding: 12px;
   border: none;
@@ -62,11 +71,26 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
   /* Outer border for the entire month calendar */
   border: 1px solid #000;
   border-radius: 8px;
-  padding: 15px;
+  /* Reduce top padding to minimise empty space above the title */
+  padding: 10px 15px 15px 15px;
   margin-bottom: 40px;
   background-color: #fff;
 }
-</style></head><body>
+
+/* Dynamic font sizing based on name length */
+.short-name {
+  /* Enlarge 2-character or shorter names to fill the cell */
+  font-size: 16px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+.long-name {
+  /* Use a slightly smaller font for longer names */
+  font-size: 12px;
+}
+
+.holiday { color: #8A2BE2; font-weight: 700; }</style></head><body>
 <div class="month-frame"><h2>▣ 2025년 1월 헬퍼 일정표</h2>
 <table>
 <colgroup>
@@ -108,19 +132,19 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td></td><td>인형</td>
-<td>인형</td><td>신송</td>
-<td>신송</td><td>은혜(1인)</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td></td><td><span class="short-name">인형</span></td>
+<td><span class="short-name">인형</span></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="long-name">은혜(1인)</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>창연</td><td></td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td><span class="short-name">창연</span></td><td></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -141,21 +165,21 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>11</strong></td>
 </tr>
 <tr class="team1">
-<td>은혜(1인)</td><td></td>
+<td><span class="long-name">은혜(1인)</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>양지</td><td>양지</td>
-<td></td><td>남원</td>
-<td>남원</td><td>남원</td>
-<td>남원</td><td></td>
+<td><span class="short-name">양지</span></td><td><span class="short-name">양지</span></td>
+<td></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>인경</td>
-<td>인경</td><td></td>
+<td></td><td><span class="short-name">인경</span></td>
+<td><span class="short-name">인경</span></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="staff">
@@ -182,14 +206,14 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>남원</td>
-<td>남원</td><td></td>
+<td></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -227,8 +251,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
-<td>우리</td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -253,17 +277,17 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>진주</td>
-<td>진주</td><td>청수</td>
+<td></td><td><span class="short-name">진주</span></td>
+<td><span class="short-name">진주</span></td><td><span class="short-name">청수</span></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td>우리</td><td></td>
+<td><span class="short-name">우리</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
 <td></td><td></td>
 </tr>
 <tr class="staff">
@@ -361,7 +385,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>청수</td><td></td>
+<td><span class="short-name">청수</span></td><td></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -392,12 +416,12 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 </tr>
 <tr class="team1">
 <td></td><td></td>
-<td></td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -405,8 +429,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>형성</td>
-<td>형성</td><td>형성</td>
+<td></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -427,26 +451,26 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>15</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>남원</td>
-<td>남원</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="team2">
-<td></td><td>신성</td>
-<td>신성</td><td>양지</td>
+<td></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">양지</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
-<td>청호</td><td></td>
+<td><span class="short-name">청호</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -463,22 +487,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>22</strong></td>
 </tr>
 <tr class="team1">
-<td>우리</td><td>우리</td>
-<td>우리</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td>청수</td>
-<td>청수</td><td>남산</td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">청수</span></td>
+<td><span class="short-name">청수</span></td><td><span class="short-name">남산</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>남산</td>
-<td>남산</td><td>남산</td>
-<td>남산</td><td>인형</td>
-<td>인형</td><td></td>
-<td>상진1</td><td>상진1</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">인형</span></td>
+<td><span class="short-name">인형</span></td><td></td>
+<td><span class="long-name">상진1</span></td><td><span class="long-name">상진1</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -486,8 +510,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td>신송</td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="short-name">신송</span></td>
 </tr>
 <tr class="date-row">
 <td colspan="2"><strong>23</strong></td>
@@ -499,25 +523,25 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"></td>
 </tr>
 <tr class="team1">
-<td>남산</td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="short-name">남산</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>남원</td>
+<td></td><td><span class="short-name">남원</span></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td>상진1</td><td>상진1</td>
-<td></td><td>도립</td>
-<td>도립</td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
-<td></td><td>인경</td>
+<td><span class="long-name">상진1</span></td><td><span class="long-name">상진1</span></td>
+<td></td><td><span class="short-name">도립</span></td>
+<td><span class="short-name">도립</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
+<td></td><td><span class="short-name">인경</span></td>
 <td></td><td></td>
 </tr>
 <tr class="staff">
-<td>신송</td><td></td>
+<td><span class="short-name">신송</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -611,7 +635,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>남원</td><td>남원</td>
+<td><span class="short-name">남원</span></td><td><span class="short-name">남원</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -620,7 +644,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>인경</td><td>선진</td>
+<td><span class="short-name">인경</span></td><td><span class="short-name">선진</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -641,22 +665,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>8</strong></td>
 </tr>
 <tr class="team1">
-<td>남원</td><td></td>
+<td><span class="short-name">남원</span></td><td></td>
 <td></td><td></td>
-<td></td><td>예진</td>
-<td>예진</td><td>예진</td>
-<td></td><td>청호</td>
-<td>청호</td><td>청호</td>
-<td></td><td>푸른</td>
+<td></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
+<td></td><td><span class="short-name">청호</span></td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td>
+<td></td><td><span class="short-name">푸른</span></td>
 </tr>
 <tr class="team2">
-<td>선진</td><td>선진</td>
-<td>선진</td><td>선진</td>
-<td></td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>동곡</td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td>
+<td></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">동곡</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -677,22 +701,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>15</strong></td>
 </tr>
 <tr class="team1">
-<td>푸른</td><td></td>
+<td><span class="short-name">푸른</span></td><td></td>
 <td></td><td></td>
-<td></td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td></td>
+<td></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td></td>
 </tr>
 <tr class="team2">
-<td>동곡</td><td>동곡</td>
+<td><span class="short-name">동곡</span></td><td><span class="short-name">동곡</span></td>
 <td></td><td></td>
-<td></td><td>증산</td>
-<td>증산</td><td>증산</td>
-<td>증산</td><td>증산</td>
-<td>증산</td><td>증산</td>
-<td>증산</td><td>동곡</td>
+<td></td><td><span class="short-name">증산</span></td>
+<td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td>
+<td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td>
+<td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td>
+<td><span class="short-name">증산</span></td><td><span class="short-name">동곡</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -700,8 +724,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 </tr>
 <tr class="date-row">
 <td colspan="2"><strong>16</strong></td>
@@ -715,20 +739,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team1">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>다불</td>
-<td>다불</td><td>다불</td>
-<td>다불</td><td></td>
+<td></td><td><span class="short-name">다불</span></td>
+<td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td>
+<td><span class="short-name">다불</span></td><td></td>
 <td></td><td></td>
-<td></td><td>인형</td>
+<td></td><td><span class="short-name">인형</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
-<td></td><td>태성</td>
-<td>태성</td><td>태성</td>
-<td>태성</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -749,22 +773,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>29</strong></td>
 </tr>
 <tr class="team1">
-<td>인형</td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
-<td>희경</td><td>희경</td>
+<td><span class="short-name">인형</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
+<td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -859,18 +883,18 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td>형성</td><td>형성</td>
-<td>형성</td><td>형성</td>
-<td>형성</td><td>형성</td>
-<td>형성</td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -891,31 +915,31 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>12</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>청호</td>
-<td>청호</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td></td><td>남원</td>
-<td>남원</td><td>인경</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">청호</span></td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td><span class="short-name">인경</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>덕원</td>
-<td>덕원</td><td>덕원</td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>남산</td>
+<td></td><td><span class="short-name">덕원</span></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">남산</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>진주</td>
-<td>진주</td><td>진주</td>
-<td>진주</td><td></td>
+<td></td><td><span class="short-name">진주</span></td>
+<td><span class="short-name">진주</span></td><td><span class="short-name">진주</span></td>
+<td><span class="short-name">진주</span></td><td></td>
 </tr>
 <tr class="date-row">
 <td colspan="2"><strong>13</strong></td>
@@ -927,22 +951,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>19</strong></td>
 </tr>
 <tr class="team1">
-<td>인경</td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td>남원</td>
-<td>남원</td><td></td>
+<td><span class="short-name">인경</span></td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
 <td></td><td></td>
-<td></td><td>청수</td>
-<td>청수</td><td></td>
+<td></td><td><span class="short-name">청수</span></td>
+<td><span class="short-name">청수</span></td><td></td>
 </tr>
 <tr class="team2">
-<td>남산</td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>동곡</td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">동곡</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -972,13 +996,13 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1001,8 +1025,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team1">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>태성</td>
-<td>태성</td><td>태성</td>
+<td></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -1109,9 +1133,9 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>태성</td><td>태성</td>
-<td>태성</td><td></td>
-<td></td><td>청수</td>
+<td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td></td>
+<td></td><td><span class="short-name">청수</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -1120,7 +1144,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>두석</td>
+<td></td><td><span class="short-name">두석</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1141,22 +1165,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>10</strong></td>
 </tr>
 <tr class="team1">
-<td>청수</td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="short-name">청수</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
-<td></td><td>재선</td>
-<td>재선</td><td>재선</td>
+<td></td><td><span class="short-name">재선</span></td>
+<td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td>
 </tr>
 <tr class="team2">
-<td>두석</td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="short-name">두석</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1177,22 +1201,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>17</strong></td>
 </tr>
 <tr class="team1">
-<td>재선</td><td>동곡</td>
+<td><span class="short-name">재선</span></td><td><span class="short-name">동곡</span></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td>창연</td><td>창연</td>
-<td>창연</td><td></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
-<td>우리</td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1213,22 +1237,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>24</strong></td>
 </tr>
 <tr class="team1">
-<td></td><td>송이</td>
-<td>송이</td><td>송이</td>
-<td>송이</td><td>청호</td>
+<td></td><td><span class="short-name">송이</span></td>
+<td><span class="short-name">송이</span></td><td><span class="short-name">송이</span></td>
+<td><span class="short-name">송이</span></td><td><span class="short-name">청호</span></td>
 <td></td><td></td>
-<td></td><td>남원</td>
-<td>남원</td><td></td>
-<td></td><td>선진</td>
+<td></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
+<td></td><td><span class="short-name">선진</span></td>
 </tr>
 <tr class="team2">
-<td>우리</td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td><span class="short-name">우리</span></td><td></td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1249,22 +1273,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>31</strong></td>
 </tr>
 <tr class="team1">
-<td>선진</td><td>선진</td>
-<td>선진</td><td>선진</td>
-<td>선진</td><td>선진</td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
-<td>우리</td><td>우리</td>
-<td>우리</td><td>우리</td>
-<td>우리</td><td></td>
+<td></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1357,20 +1381,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team1">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>청수</td>
-<td>청수</td><td>남원</td>
-<td>남원</td><td>남원</td>
-<td>남원</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">청수</span></td>
+<td><span class="short-name">청수</span></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td><span class="short-name">남원</span></td>
+<td><span class="short-name">남원</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>창연</td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1391,22 +1415,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>14</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>형성</td>
-<td>형성</td><td>형성</td>
-<td>형성</td><td></td>
-<td></td><td>덕원</td>
-<td></td><td>신송</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td></td>
+<td></td><td><span class="short-name">덕원</span></td>
+<td></td><td><span class="short-name">신송</span></td>
 </tr>
 <tr class="team2">
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>예진</td>
-<td></td><td>도립(1인)</td>
+<td></td><td><span class="short-name">예진</span></td>
+<td></td><td><span class="long-name">도립(1인)</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1427,22 +1451,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>21</strong></td>
 </tr>
 <tr class="team1">
-<td>신송</td><td></td>
-<td>덕원</td><td>덕원</td>
-<td>덕원</td><td>덕원</td>
-<td>덕원</td><td>덕원</td>
-<td>덕원</td><td>덕원</td>
+<td><span class="short-name">신송</span></td><td></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
 <td></td><td></td>
-<td></td><td>예진</td>
+<td></td><td><span class="short-name">예진</span></td>
 </tr>
 <tr class="team2">
-<td>도립(1인)</td><td>도립(1인)</td>
-<td>예진</td><td>예진</td>
-<td>예진</td><td>예진</td>
-<td>예진</td><td>예진</td>
-<td>예진</td><td>예진</td>
+<td><span class="long-name">도립(1인)</span></td><td><span class="long-name">도립(1인)</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1463,18 +1487,18 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>28</strong></td>
 </tr>
 <tr class="team1">
-<td></td><td>남산</td>
-<td>남산</td><td>남산</td>
-<td>남산</td><td></td>
-<td></td><td>청호</td>
-<td>청호</td><td></td>
+<td></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td></td>
+<td></td><td><span class="short-name">청호</span></td>
+<td><span class="short-name">청호</span></td><td></td>
 <td></td><td></td>
-<td>다불</td><td>다불</td>
+<td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -1499,8 +1523,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"></td>
 </tr>
 <tr class="team1">
-<td>다불</td><td>다불</td>
-<td>다불</td><td>다불</td>
+<td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td>
+<td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -1607,20 +1631,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team1">
 <td></td><td></td>
 <td></td><td></td>
-<td>다불</td><td>다불</td>
+<td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>청호</td><td>청호</td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1641,20 +1665,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>12</strong></td>
 </tr>
 <tr class="team1">
-<td>청호</td><td>청호</td>
-<td>청호</td><td>청호</td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>태성</td>
-<td>태성</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>예진</td>
-<td>예진</td><td>예진</td>
-<td></td><td>우리</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
+<td></td><td><span class="short-name">우리</span></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
@@ -1677,9 +1701,9 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>19</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>신송</td>
-<td>신송</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -1688,11 +1712,11 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td></td>
+<td></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1713,22 +1737,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>26</strong></td>
 </tr>
 <tr class="team1">
-<td></td><td>성안</td>
-<td>성안</td><td></td>
+<td></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>동곡</td>
+<td></td><td><span class="short-name">동곡</span></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
-<td></td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
+<td></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1749,20 +1773,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>선진</td>
-<td>선진</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">선진</span></td>
+<td><span class="short-name">선진</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td>우리</td>
-<td>우리</td><td>우리</td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
@@ -1860,8 +1884,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -1869,8 +1893,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>우리</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td><span class="short-name">우리</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1891,21 +1915,21 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>9</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>도립(1인)</td>
-<td>도립(1인)</td><td>도립(1인)</td>
-<td>도립(1인)</td><td>도립(1인)</td>
-<td></td><td>두석</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="long-name">도립(1인)</span></td>
+<td><span class="long-name">도립(1인)</span></td><td><span class="long-name">도립(1인)</span></td>
+<td><span class="long-name">도립(1인)</span></td><td><span class="long-name">도립(1인)</span></td>
+<td></td><td><span class="short-name">두석</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>덕원</td>
-<td>덕원</td><td>덕원</td>
-<td></td><td>남산</td>
-<td>남산</td><td>남산</td>
-<td>남산</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">덕원</span></td>
+<td><span class="short-name">덕원</span></td><td><span class="short-name">덕원</span></td>
+<td></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="staff">
@@ -1927,22 +1951,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>16</strong></td>
 </tr>
 <tr class="team1">
-<td>두석</td><td></td>
+<td><span class="short-name">두석</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td>청수</td>
-<td>청수</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="short-name">청수</span></td>
+<td><span class="short-name">청수</span></td><td></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
-<td></td><td>신성</td>
-<td>신성</td><td>신성</td>
-<td>신성</td><td></td>
-<td></td><td>정현</td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td>
+<td><span class="short-name">신성</span></td><td></td>
+<td></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -1967,14 +1991,14 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>푸른</td><td></td>
+<td><span class="short-name">푸른</span></td><td></td>
 <td></td><td></td>
-<td></td><td>선진</td>
+<td></td><td><span class="short-name">선진</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -1999,22 +2023,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>30</strong></td>
 </tr>
 <tr class="team1">
-<td>선진</td><td>남산</td>
-<td>남산</td><td>남산</td>
-<td>남산</td><td></td>
+<td><span class="short-name">선진</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td>
+<td><span class="short-name">남산</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>덕원</td>
+<td></td><td><span class="short-name">덕원</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>예진</td>
-<td>예진</td><td>예진</td>
+<td></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">예진</span></td>
+<td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2111,16 +2135,16 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>우리</td>
+<td></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>예진</td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="short-name">예진</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2141,22 +2165,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>13</strong></td>
 </tr>
 <tr class="team1">
-<td>우리</td><td></td>
+<td><span class="short-name">우리</span></td><td></td>
 <td></td><td></td>
-<td>청호</td><td>청호</td>
-<td>청호</td><td></td>
-<td></td><td>태성</td>
-<td>태성</td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td>
+<td><span class="short-name">청호</span></td><td></td>
+<td></td><td><span class="short-name">태성</span></td>
+<td><span class="short-name">태성</span></td><td></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
-<td>창연</td><td>창연</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2177,22 +2201,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>20</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td></td><td>신송</td>
-<td>신송</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>예진</td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">예진</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2219,7 +2243,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>송이</td>
+<td></td><td><span class="short-name">송이</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -2249,8 +2273,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"></td>
 </tr>
 <tr class="team1">
-<td>송이</td><td>송이</td>
-<td>송이</td><td></td>
+<td><span class="short-name">송이</span></td><td><span class="short-name">송이</span></td>
+<td><span class="short-name">송이</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2260,7 +2284,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>정현</td>
+<td></td><td><span class="short-name">정현</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2360,17 +2384,17 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td>정현</td><td>정현</td>
-<td>정현</td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2391,13 +2415,13 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>11</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td>청수</td>
-<td>청수</td><td>우리</td>
-<td>우리</td><td>우리</td>
-<td>우리</td><td>우리</td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="short-name">청수</span></td>
+<td><span class="short-name">청수</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
+<td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -2427,22 +2451,22 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>18</strong></td>
 </tr>
 <tr class="team1">
-<td>우리</td><td></td>
+<td><span class="short-name">우리</span></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td>정현</td>
-<td>정현</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td><span class="short-name">정현</span></td>
+<td><span class="short-name">정현</span></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>형성</td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">형성</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2463,17 +2487,17 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>25</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
-<td></td><td>야곱</td>
-<td>야곱</td><td>야곱</td>
-<td>야곱</td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
+<td></td><td><span class="short-name">야곱</span></td>
+<td><span class="short-name">야곱</span></td><td><span class="short-name">야곱</span></td>
+<td><span class="short-name">야곱</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td>형성</td><td>형성</td>
-<td>형성</td><td>형성</td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
+<td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2620,7 +2644,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2650,8 +2674,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2682,8 +2706,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>신송</td>
-<td>신송</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -2692,7 +2716,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2713,17 +2737,17 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>22</strong></td>
 </tr>
 <tr class="team1">
-<td></td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td>성안</td>
-<td>성안</td><td></td>
+<td></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td>
+<td><span class="short-name">성안</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2754,8 +2778,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -2764,7 +2788,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>영신</td>
+<td></td><td><span class="short-name">영신</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2856,8 +2880,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 </tr>
 <tr class="team1">
 <td></td><td></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2865,7 +2889,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 </tr>
 <tr class="team2">
 <td></td><td></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2893,11 +2917,11 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <tr class="team1">
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td>은혜</td>
-<td>은혜</td><td>은혜</td>
-<td>은혜</td><td>은혜</td>
-<td>은혜</td><td>은혜</td>
-<td>은혜</td><td>은혜</td>
+<td></td><td><span class="short-name">은혜</span></td>
+<td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
+<td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
+<td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
+<td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
 </tr>
 <tr class="team2">
 <td></td><td></td>
@@ -2906,7 +2930,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 </tr>
 <tr class="staff">
 <td></td><td></td>
@@ -2927,8 +2951,8 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td colspan="2"><strong>20</strong></td>
 </tr>
 <tr class="team1">
-<td></td><td>신송</td>
-<td>신송</td><td></td>
+<td></td><td><span class="short-name">신송</span></td>
+<td><span class="short-name">신송</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -2936,9 +2960,9 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 </tr>
 <tr class="team2">
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td><span class="holiday">휴무</span></td>
-<td><span class="holiday">휴무</span></td><td></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td><span class="holiday short-name">휴무</span></td>
+<td><span class="holiday short-name">휴무</span></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -3002,7 +3026,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
-<td></td><td><span class="holiday">휴무</span></td>
+<td></td><td><span class="holiday short-name">휴무</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
