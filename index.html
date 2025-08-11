@@ -4,16 +4,16 @@
 <head><meta charset="utf-8"/><title>2025 헬퍼 일정표</title>
 <style>
 table { border-collapse: collapse; width: 100%; margin-bottom: 30px; table-layout: fixed; }
-th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 32px; min-height: 32px; }
+th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 40px; min-height: 40px; }
 tr { height: 40px; }
 
 /* Adjust font sizes based on row type to improve readability relative to cell height */
 /* Larger font for day-of-week header */
-th strong { font-size: 15px; }
+th strong { font-size: 16px; }
 /* Larger font for date numbers */
-tbody tr.date-row td strong { font-size: 16px; }
+tbody tr.date-row td strong { font-size: 14px; }
 /* Slightly smaller font for helper rows to fit within the same height */
-tr.team1 td, tr.team2 td, tr.staff td { font-size: 11px; }
+tr.team1 td, tr.team2 td, tr.staff td { font-size: 12px; }
 
 /* team colours */
 /* Updated team colours */
@@ -80,7 +80,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 /* Dynamic font sizing based on name length */
 .short-name {
   /* Enlarge 2-character or shorter names to fill the cell */
-  font-size: 15px;
+  font-size: 16px;
   display: inline-block;
   width: 100%;
   text-align: center;
@@ -3310,47 +3310,5 @@ document.addEventListener('DOMContentLoaded', function(){
   } catch (e) {
     console.warn('today block highlight failed:', e);
   }
-});
-</script><script>
-// --- Auto-fit current month to viewport on load ---
-document.addEventListener('DOMContentLoaded', function(){
-  // find current month frame (same logic as autoscroll script)
-  const now = new Date();
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
-  const re = new RegExp(String(y) + '\\s*년\\s*' + String(m) + '\\s*월');
-  let frame = null;
-  document.querySelectorAll('.month-frame').forEach(f => {
-    const h2 = f.querySelector('h2');
-    if (h2 && re.test(h2.textContent)) frame = f;
-  });
-  if (!frame) return;
-
-  // After layout settles (and after scroll), compute scale to fit viewport
-  setTimeout(()=>{
-    const prev = frame.style.transform;
-    frame.style.transform = ''; // measure natural size
-    const w = frame.offsetWidth;
-    const h = frame.offsetHeight;
-    frame.style.transform = prev;
-    // padding for viewport margins / toolbar
-    const scale = Math.min( (window.innerWidth - 24)/w, (window.innerHeight - 32)/h );
-    const s = Math.max(0.6, Math.min(1.5, scale));
-    frame.style.transformOrigin = 'top left';
-    frame.style.transform = 'scale(' + s + ')';
-  }, 400);
-
-  // Re-fit on window resize
-  window.addEventListener('resize', () => {
-    const prev = frame.style.transform;
-    frame.style.transform = '';
-    const w = frame.offsetWidth;
-    const h = frame.offsetHeight;
-    frame.style.transform = prev;
-    const scale = Math.min( (window.innerWidth - 24)/w, (window.innerHeight - 32)/h );
-    const s = Math.max(0.6, Math.min(1.5, scale));
-    frame.style.transformOrigin = 'top left';
-    frame.style.transform = 'scale(' + s + ')';
-  });
 });
 </script></body></html>
