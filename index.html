@@ -165,6 +165,8 @@ tr.staff.row-collapsed td {
   font-size: 0 !important;
   line-height: 0 !important;
 }
+
+.month-frame{scroll-margin-top:12px;}
 </style></head><body>
 <div class="month-frame"><h2>▣ 2025년 1월 헬퍼 일정표</h2>
 <table>
@@ -3277,4 +3279,91 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 });
+</script><script>
+(function(){
+  const URL = location.href.split('#')[0];
+  let lastTag = null, timer = null;
+
+  async function check(){
+    try {
+      const res = await fetch(URL, { method: 'HEAD', cache: 'no-cache' });
+      const tag = (res.headers.get('ETag') || res.headers.get('Last-Modified') || '') + '';
+      if (lastTag && tag && tag !== lastTag) {
+        location.reload();
+        return;
+      }
+      if (tag) lastTag = tag;
+    } catch (e) {
+      // ignore network errors
+    } finally {
+      timer = setTimeout(check, 12000000); // 60s
+    }
+  }
+
+  // Pause polling in background tabs; resume on focus
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (timer) { clearTimeout(timer); timer = null; }
+    } else {
+      check();
+    }
+  });
+
+  check();
+})();
+</script><script>
+(function(){
+  // Try several times after load to ensure layout is ready
+  const RETRIES = 8, INTERVAL = 200; // 8 tries x 200ms ≈ 1.6s
+
+  function parseTitle(txt){
+    const m = txt && txt.match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
+    return m ? {y: parseInt(m[1],10), mo: parseInt(m[2],10)} : null;
+  }
+  function findFrame(y, mo){
+    let target = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      const p = h2 ? parseTitle(h2.textContent) : null;
+      if (p && p.y === y && p.mo === mo) target = f;
+    });
+    return target;
+  }
+  function doScroll(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const mo = now.getMonth() + 1;
+    const f = findFrame(y, mo);
+    if (f){
+      try {
+        f.scrollIntoView({behavior:'smooth', block:'start', inline:'nearest'});
+      } catch(e){
+        f.scrollIntoView(true);
+      }
+      return true;
+    }
+    return false;
+  }
+  function retry(){
+    let tries = 0;
+    const tick = () => {
+      if (doScroll() || tries >= RETRIES) return;
+      tries++;
+      setTimeout(tick, INTERVAL);
+    };
+    // initial attempt after a frame
+    requestAnimationFrame(() => {
+      if (!doScroll()){
+        setTimeout(tick, INTERVAL);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', retry);
+  } else {
+    retry();
+  }
+  window.addEventListener('load', retry);
+})();
 </script></body></html>
