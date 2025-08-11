@@ -106,7 +106,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
   content: " 오늘";
   font-size: 10px;
   font-weight: 700;
-  color: #EB5800;
+  color: #2EC4B6;
   margin-left: 4px;
 }
 
@@ -3365,5 +3365,157 @@ document.addEventListener('DOMContentLoaded', function(){
     retry();
   }
   window.addEventListener('load', retry);
+})();
+</script><script>
+/*ID:autoScroll*/
+(function(){
+  const RETRIES = 8, INTERVAL = 200; // ~1.6s total
+  function parseTitle(txt){
+    const m = txt && txt.match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
+    return m ? {y: parseInt(m[1],10), mo: parseInt(m[2],10)} : null;
+  }
+  function findFrame(y, mo){
+    let target = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      const p = h2 ? parseTitle(h2.textContent) : null;
+      if (p && p.y === y && p.mo === mo) target = f;
+    });
+    return target;
+  }
+  function doScroll(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const mo = now.getMonth() + 1;
+    const f = findFrame(y, mo);
+    if (f){
+      try { f.scrollIntoView({behavior:'smooth', block:'start', inline:'nearest'}); }
+      catch(e){ f.scrollIntoView(true); }
+      return true;
+    }
+    return false;
+  }
+  function retry(){
+    let tries = 0;
+    const tick = () => {
+      if (doScroll() || tries >= RETRIES) return;
+      tries++; setTimeout(tick, INTERVAL);
+    };
+    requestAnimationFrame(()=>{ if (!doScroll()) setTimeout(tick, INTERVAL); });
+  }
+  if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', retry); }
+  else { retry(); }
+  window.addEventListener('load', retry);
+})();
+</script><script>
+/*ID:todayBlock*/
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const re = new RegExp(String(y) + '\\s*년\\s*' + String(m) + '\\s*월');
+    let frame = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      if (h2 && re.test(h2.textContent)) frame = f;
+    });
+    if (!frame) return;
+
+    const dateRows = frame.querySelectorAll('tr.date-row');
+    let todayTd = null, todayRow = null, dayIdx = -1;
+    outer: for (const row of dateRows) {
+      const tds = Array.from(row.querySelectorAll('td'));
+      for (let i=0;i<tds.length;i++){
+        const s = tds[i].querySelector('strong');
+        const num = s ? parseInt(s.textContent, 10) : NaN;
+        if (num === d) { todayTd = tds[i]; todayRow = row; dayIdx = i; break outer; }
+      }
+    }
+    if (!todayTd || dayIdx < 0) return;
+
+    // mark top cell and keep "오늘" label (mint color set in CSS)
+    todayTd.classList.add('today-date', 'today-cell');
+
+    // left/right AM/PM columns (14 tds total)
+    const leftCol = dayIdx * 2;
+    const rightCol = leftCol + 1;
+
+    let r1 = todayRow.nextElementSibling; // team1
+    let r2 = r1 ? r1.nextElementSibling : null; // team2
+    let r3 = r2 ? r2.nextElementSibling : null; // staff
+    const rows = [r1, r2, r3].filter(Boolean);
+    if (rows.length !== 3) return;
+
+    function tagPair(tr, isBottom){
+      const cells = Array.from(tr.querySelectorAll('td'));
+      if (cells.length < rightCol+1) return;
+      cells[leftCol].classList.add('today-col-left');
+      cells[rightCol].classList.add('today-col-right');
+      if (isBottom){
+        cells[leftCol].classList.add('today-bottom-left');
+        cells[rightCol].classList.add('today-bottom-right');
+      }
+    }
+    tagPair(r1, false);
+    tagPair(r2, false);
+    tagPair(r3, true);
+  } catch (e) { console.warn('today block highlight failed:', e); }
+});
+</script><script>
+/*ID:collapseStaff*/
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.month-frame table').forEach(tbl => {
+    tbl.querySelectorAll('tr.staff').forEach(tr => {
+      const tds = Array.from(tr.querySelectorAll('td'));
+      const allEmpty = tds.every(td => (td.textContent || '').replace(/\u00A0/g,'').trim() === '');
+      if (allEmpty) tr.classList.add('row-collapsed');
+    });
+  });
+});
+</script><script>
+/*ID:holidayTag*/
+document.addEventListener('DOMContentLoaded', function(){
+  const isHoliday = (s) => {
+    if (!s) return false;
+    return s.replace(/\u00A0/g,'').replace(/\s+/g,'').trim() === '휴무';
+  };
+  document.querySelectorAll('td').forEach(td=>{
+    const raw = (td.textContent||'');
+    if (isHoliday(raw)) {
+      let span = td.querySelector('span');
+      if (!span) {
+        span = document.createElement('span');
+        span.className = 'short-name holiday';
+        span.textContent = '휴무';
+        td.innerHTML = '';
+        td.appendChild(span);
+      } else {
+        span.classList.add('holiday');
+        span.textContent = '휴무';
+      }
+    }
+  });
+});
+</script><script>
+/*ID:autoRefreshUpdatesOnly*/
+(function(){
+  const URL = location.href.split('#')[0];
+  let lastTag = null, timer = null;
+  async function check(){
+    try {
+      const res = await fetch(URL, { method: 'HEAD', cache: 'no-cache' });
+      const tag = (res.headers.get('ETag') || res.headers.get('Last-Modified') || '') + '';
+      if (lastTag && tag && tag !== lastTag) { location.reload(); return; }
+      if (tag) lastTag = tag;
+    } catch(e) { /* ignore */ }
+    finally { timer = setTimeout(check, 60000); } // 60s
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (timer) { clearTimeout(timer); timer = null; } }
+    else { check(); }
+  });
+  check();
 })();
 </script></body></html>
