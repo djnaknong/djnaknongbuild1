@@ -4,16 +4,16 @@
 <head><meta charset="utf-8"/><title>2025 헬퍼 일정표</title>
 <style>
 table { border-collapse: collapse; width: 100%; margin-bottom: 30px; table-layout: fixed; }
-th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 40px; min-height: 40px; }
+th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 32px; min-height: 32px; }
 tr { height: 40px; }
 
 /* Adjust font sizes based on row type to improve readability relative to cell height */
 /* Larger font for day-of-week header */
-th strong { font-size: 16px; }
+th strong { font-size: 15px; }
 /* Larger font for date numbers */
-tbody tr.date-row td strong { font-size: 14px; }
+tbody tr.date-row td strong { font-size: 16px; }
 /* Slightly smaller font for helper rows to fit within the same height */
-tr.team1 td, tr.team2 td, tr.staff td { font-size: 12px; }
+tr.team1 td, tr.team2 td, tr.staff td { font-size: 11px; }
 
 /* team colours */
 /* Updated team colours */
@@ -80,7 +80,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 /* Dynamic font sizing based on name length */
 .short-name {
   /* Enlarge 2-character or shorter names to fill the cell */
-  font-size: 16px;
+  font-size: 15px;
   display: inline-block;
   width: 100%;
   text-align: center;
@@ -91,33 +91,12 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 }
 
 /* --- Fit-to-screen controls & scaling --- */
-.fit-toolbar {
-  position: fixed;
-  right: 12px;
-  top: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  padding: 6px 10px;
-  background: rgba(255,255,255,0.9);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  z-index: 9999;
-  font-size: 12px;
-}
-.fit-toolbar button {
-  padding: 4px 8px;
-  border: 1px solid #888;
-  background: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-}
-.fit-toolbar input[type="range"] {
-  vertical-align: middle;
-}
+
+
+
 @media print {
   .month-frame { transform: none !important; }
-  .fit-toolbar { display: none; }
+  
 }
 .month-frame { transform-origin: top left; }
 
@@ -164,12 +143,9 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 /* If legend items are in a list, align nicely */
 .legend li { display: flex; align-items: center; gap: 8px; }
 .legend { margin-top: 8px; }
-</style></head><body>
-<div class="fit-toolbar">
-<button id="fitBtn">화면맞춤</button>
-<label>배율 <input id="scaleRange" max="160" min="50" type="range" value="100"/> <span id="scaleVal">100%</span></label>
-<button id="resetBtn">100%</button>
-</div>
+
+.month-frame { transform: none !important; }</style></head><body>
+
 <div class="month-frame"><h2>▣ 2025년 1월 헬퍼 일정표</h2>
 <table>
 <colgroup>
@@ -3171,50 +3147,6 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 <span><span class="color-box staff-color"></span>직원</span>
 </div></div>
 <script>
-// --- Fit-to-screen & manual scale ---
-(function(){
-  const frames = Array.from(document.querySelectorAll('.month-frame'));
-  const range = document.getElementById('scaleRange');
-  const val = document.getElementById('scaleVal');
-  const btnFit = document.getElementById('fitBtn');
-  const btnReset = document.getElementById('resetBtn');
-
-  function measure(el){
-    const prev = el.style.transform;
-    el.style.transform = '';
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    el.style.transform = prev;
-    return {w, h};
-  }
-  function nearestFrame(){
-    const yMid = window.innerHeight / 4;
-    let best = frames[0], bestDist = Infinity;
-    frames.forEach(f => {
-      const r = f.getBoundingClientRect();
-      const d = Math.abs(r.top - yMid);
-      if (d < bestDist) { best = f; bestDist = d; }
-    });
-    return best;
-  }
-  function applyScale(s){
-    frames.forEach(f => {
-      f.style.transformOrigin = 'top left';
-      f.style.transform = 'scale(' + s + ')';
-    });
-    range.value = Math.round(s*100);
-    val.textContent = Math.round(s*100) + '%';
-  }
-  btnFit.addEventListener('click', () => {
-    const target = nearestFrame();
-    const {w, h} = measure(target);
-    const scale = Math.min((window.innerWidth - 24)/w, (window.innerHeight - 24)/h);
-    applyScale(Math.max(0.5, Math.min(1.6, scale)));
-  });
-  btnReset.addEventListener('click', () => applyScale(1));
-  range.addEventListener('input', () => applyScale(parseInt(range.value, 10)/100));
-})();
-</script><script>
 // --- Auto-scroll to current month & mark today's date ---
 document.addEventListener('DOMContentLoaded', function(){
   // Find month frame for current year/month from system clock
