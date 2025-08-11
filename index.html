@@ -144,8 +144,28 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) 
 .legend li { display: flex; align-items: center; gap: 8px; }
 .legend { margin-top: 8px; }
 
-.month-frame { transform: none !important; }</style></head><body>
+.month-frame { transform: none !important; }
+/* --- Collapse staff rows with no schedule --- */
+.row-collapsed td {
+  height: 6px !important;
+  min-height: 6px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
 
+/* --- Ensure collapsed staff rows override row height --- */
+tr.staff.row-collapsed { height: 6px !important; }
+tr.staff.row-collapsed td {
+  height: 6px !important;
+  min-height: 6px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+</style></head><body>
 <div class="month-frame"><h2>▣ 2025년 1월 헬퍼 일정표</h2>
 <table>
 <colgroup>
@@ -3242,5 +3262,19 @@ document.addEventListener('DOMContentLoaded', function(){
   } catch (e) {
     console.warn('today block highlight failed:', e);
   }
+});
+</script><script>
+document.addEventListener('DOMContentLoaded', function(){
+  // For each month, find staff rows and minimize those with no text in any cell
+  document.querySelectorAll('.month-frame table').forEach(tbl => {
+    tbl.querySelectorAll('tr.staff').forEach(tr => {
+      const tds = Array.from(tr.querySelectorAll('td'));
+      // Consider a cell empty if its textContent (without NBSP) is empty
+      const allEmpty = tds.every(td => (td.textContent || '').replace(/\u00A0/g,'').trim() === '');
+      if (allEmpty) {
+        tr.classList.add('row-collapsed');
+      }
+    });
+  });
 });
 </script></body></html>
