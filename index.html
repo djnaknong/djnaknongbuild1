@@ -2576,8 +2576,8 @@ body.print-mode .print-target {
 </tr>
 <tr class="team2">
 <td></td><td><span class="short-name">휴뮤</span></td>
-<td><span class="short-name">휴뮤</span></td><td></td>
-<td></td><td></td>
+<td><span class="short-name">휴뮤</span></td><td><span class="short-name">창연</span></td>
+<td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td>
 <td></td><td></td>
 <td></td><td></td>
 <td></td><td></td>
@@ -3244,7 +3244,7 @@ body.print-mode .print-target {
 <td colspan="2"><strong>13</strong></td>
 </tr>
 <tr class="team1">
-<td><span class="short-name">은혜</span><td><span class="short-name">은혜</span></td>
+<td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
 <td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
 <td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
 <td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td>
@@ -3835,7 +3835,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var raw = prompt('출력할 연도-월을 입력하세요 (예: 2025-03)');
   if (!raw) return;
   var m = raw.trim().match(/^(\d{4})[-.\/\s]?(\d{1,2})$/);
-  if (!m){ alert('입력 형식은 \"YYYY-MM\" 입니다. 예: 2025-03'); return; }
+  if (!m){ alert('입력 형식은 \&quot;YYYY-MM&quot; 입니다. 예: 2025-03'); return; }
   var y = m[1], mm = String(parseInt(m[2],10));
   var frame = findMonthFrame(y, mm);
   if (!frame){ alert(y+'년 '+mm+'월 일정표를 찾지 못했습니다.'); return; }
