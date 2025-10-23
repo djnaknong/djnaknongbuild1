@@ -1,0 +1,4671 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head><meta charset="utf-8"/>
+<title>2026 헬퍼 일정표</title>
+<style>
+table { border-collapse: collapse; width: 100%; margin-bottom: 30px; table-layout: fixed; }
+th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 32px; min-height: 32px; }
+tr { height: 40px; }
+
+/* Adjust font sizes based on row type to improve readability relative to cell height */
+/* Larger font for day-of-week header */
+th strong { font-size: 15px; }
+/* Larger font for date numbers */
+tbody tr.date-row td strong { font-size: 16px; }
+/* Slightly smaller font for helper rows to fit within the same height */
+tr.team1 td, tr.team2 td, tr.staff td { font-size: 11px; }
+
+/* team colours */
+/* Updated team colours */
+tr.team1 { background-color: #C9E4DE; }
+tr.team2 { background-color: #f7d9c4; }
+tr.staff { background-color: #dbcdf0; }
+
+/* highlight Sunday and Saturday in date rows */
+tbody tr.date-row td:first-child strong { color: red; }
+tbody tr.date-row td:last-child strong { color: blue; }
+
+h2 {
+  /* Remove standalone border and radius; provide separation line below title */
+  /* Reduce the space above the title to minimize empty area */
+  margin-top: 0;
+  margin-bottom: 0;
+  padding: 12px;
+  border: none;
+  border-bottom: 1px solid #000;
+  border-radius: 0;
+  background-color: #fff;
+  font-size: 1.2em;
+  text-align: center;
+}
+h2 + table {
+  /* Let the table blend into the month frame; no additional outer border or radius */
+  border: none;
+  border-top: none;
+  border-radius: 0;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: none;
+}
+
+.legend { margin-bottom: 30px; font-size: 0.9em; }
+.legend span { margin-right: 20px; }
+.legend .color-box { display: inline-block; width: 14px; height: 14px; border: 1px solid #000; margin-right: 4px; vertical-align: middle; }
+.legend .team1-color { background-color: #C9E4DE; }
+.legend .team2-color { background-color: #f7d9c4; }
+.legend .staff-color { background-color: #dbcdf0; }
+
+.holiday { color: #8A2BE2; }
+/* Color Saturday cells blue and Sunday cells red in task rows */
+tr.team1 td:nth-child(1), tr.team2 td:nth-child(1), tr.staff td:nth-child(1),
+tr.team1 td:nth-child(2), tr.team2 td:nth-child(2), tr.staff td:nth-child(2) {
+    color: red;
+}
+tr.team1 td:nth-child(13), tr.team2 td:nth-child(13), tr.staff td:nth-child(13),
+tr.team1 td:nth-child(14), tr.team2 td:nth-child(14), tr.staff td:nth-child(14) {
+    color: blue;
+}
+
+.month-frame {
+  /* Outer border for the entire month calendar */
+  border: 1px solid #000;
+  border-radius: 8px;
+  /* Reduce top padding to minimise empty space above the title */
+  padding: 10px 15px 15px 15px;
+  margin-bottom: 40px;
+  background-color: #fff;
+}
+
+/* Dynamic font sizing based on name length */
+.short-name {
+  /* Enlarge 2-character or shorter names to fill the cell */
+  font-size: 15px;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+.long-name {
+  /* Use a slightly smaller font for longer names */
+  font-size: 12px;
+}
+
+/* --- Fit-to-screen controls & scaling --- */
+
+
+
+@media print {
+  .month-frame { transform: none !important; }
+  
+}
+.month-frame { transform-origin: top left; }
+
+/* --- Today highlight --- */
+.today-cell { outline: none !important; background: transparent !important; }
+.today-cell strong::after {
+  content: " 오늘";
+  font-size: 10px;
+  font-weight: 700;
+  color: #2EC4B6;
+  margin-left: 4px;
+}
+
+/* --- Mint block highlight spanning Date + Helper rows --- */
+:root { --todayMint: #2EC4B6; --todayMintBg: rgba(46,196,182,0.10); }
+.today-date {
+  border: 2px solid var(--todayMint) !important;
+  border-bottom: 0 !important;
+  background: var(--todayMintBg) !important;
+  border-radius: 10px 10px 0 0;
+}
+.today-col-left, .today-col-right { background: var(--todayMintBg) !important; }
+.today-col-left { background: var(--todayMintBg) !important; border-left: 2px solid var(--todayMint) !important; border-right: 1px solid #9aa !important; }
+.today-col-right {
+  border-right: 2px solid var(--todayMint) !important;
+  border-left: 0 !important;
+}
+.today-col-left + .today-col-right { /* keep center divider via left cell's right border */ }
+.today-bottom-left { border-bottom: 2px solid var(--todayMint) !important; border-radius: 0 0 0 10px; }
+.today-bottom-right { border-bottom: 2px solid var(--todayMint) !important; border-radius: 0 0 10px 0; }
+
+/* --- Larger legend swatches for better visibility --- */
+.legend .team1-color,
+.legend .team2-color,
+.legend .staff-color,
+.legend .swatch {
+  display: inline-block;
+  width: 80px;   /* wider horizontal bar */
+  height: 12px;  /* slim height for a clean look */
+  border-radius: 4px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+/* If legend items are in a list, align nicely */
+.legend li { display: flex; align-items: center; gap: 8px; }
+.legend { margin-top: 8px; }
+
+.month-frame { transform: none !important; }
+/* --- Collapse staff rows with no schedule --- */
+.row-collapsed td {
+  height: 6px !important;
+  min-height: 6px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+/* --- Ensure collapsed staff rows override row height --- */
+tr.staff.row-collapsed { height: 6px !important; }
+tr.staff.row-collapsed td {
+  height: 6px !important;
+  min-height: 6px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+}
+
+.month-frame{scroll-margin-top:12px;}
+</style><style id="print-additions">
+/* ==== A4 전용 프린트 세팅 ==== */
+@page { size: A4 portrait; margin: 5mm; }
+
+/* 인쇄 시 프린트 컨트롤 숨김 + 목표 달만 보이게 */
+@media print {
+  #printControls { display: none !important; }
+  html, body { height: auto; }
+  .legend { break-inside: avoid; }
+  .month-frame { page-break-inside: avoid; }
+  body.print-mode .month-frame { display: none !important; }
+  body.print-mode .print-target { display: block !important; }
+}
+
+/* 인쇄 모드에서 대상 달이 용지에 가득 차도록 */
+body.print-mode .print-target {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  transform: none !important;
+}
+</style>
+<style id="print-fab-style">
+#printFab {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  background: #111;
+  color: #fff;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,.2);
+  cursor: pointer;
+  z-index: 999999;
+}
+@media print {
+  #printFab { display: none !important; }
+}
+</style>
+
+<style id="print-overlay-style">
+#printOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999;
+}
+#printOverlay .panel {
+  width: min(520px, 92vw);
+  max-height: 80vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  padding: 16px;
+}
+#printOverlay h3 { margin: 0 0 8px; font-size: 18px; }
+#printOverlay p { margin: 0 0 12px; color: #444; font-size: 13px; }
+#printOverlay .row { display: flex; gap: 8px; margin-bottom: 10px; }
+#printOverlay input[type="text"] {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+#printOverlay button {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #222;
+  background: #111; color: #fff; cursor: pointer; font-weight: 600;
+}
+#printOverlay .ghost { background: #f5f5f5; color: #111; border: 1px solid #ccc; }
+#printOverlay .list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#printOverlay .item { border: 1px solid #ddd; border-radius: 8px; padding: 10px; cursor: pointer; }
+#printOverlay .item:hover { background: #fafafa; }
+@media print { #printOverlay { display: none !important; } }
+</style>
+
+
+<style id="print-landscape">
+@page { size: A4 landscape; margin: 8mm; }
+@media print {
+  html, body { width: 100%; height: 100%; margin: 0; padding: 0; }
+  body.print-mode .print-target {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+</style>
+
+
+<style id="print-tighten">
+@media print {
+  body.print-mode .print-target {
+    font-size: 90% !important;
+    line-height: 1.2 !important;
+  }
+  body.print-mode .print-target table {
+    border-collapse: collapse !important;
+  }
+  body.print-mode .print-target th,
+  body.print-mode .print-target td {
+    padding: 2px 4px !important;
+    margin: 0 !important;
+  }
+  body.print-mode .print-target h1,
+  body.print-mode .print-target h2,
+  body.print-mode .print-target h3 {
+    margin: 8px 0 !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    text-decoration: underline !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color: inherit !important;
+  }
+  body.print-mode .print-target .legend { margin: 2px 0 !important; font-size: 10px !important; }
+  body.print-mode .print-target th,
+  body.print-mode .print-target td { padding: 2px 4px !important; font-size: 12px !important; }
+}
+</style>
+
+
+<style id="print-tight-2">
+@media print {
+  /* 가독성 유지하면서 높이/너비 모두 맞추기 위해 줄바꿈 적극 허용 */
+  body.print-mode .print-target th,
+  body.print-mode .print-target td {
+    white-space: normal !important;
+    hyphens: auto !important;
+  }
+  /* 페이지 분할 방지 */
+  .month-frame, .legend, table, thead, tbody, tfoot, tr, h1, h2, h3 {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  /* 여백 더 축소 (위아래 3mm, 좌우 3mm) */
+}
+</style>
+
+
+<style id="print-hide-legend">
+@media print {
+  .legend { display: none !important; }
+}
+</style>
+
+
+<style id="print-keep-header">
+@media print {
+  h1, h2, h3 {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  h1 + *, h2 + *, h3 + * {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+}
+</style>
+
+
+<style id="print-zoom-fill">
+@media print {
+  /* Scale via zoom (Chromium) and disable transform-based scaling which can cause odd page breaks */
+  body.print-mode .print-target {
+    zoom: var(--print-scale, 0.95) !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Allow rows/sections to break naturally so 여유공간을 채우며 1페이지 유지 */
+  thead, tbody, tfoot, tr {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+  /* 방해되는 과도한 회피 규칙을 무력화 */
+  table, .month-frame, .legend {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+}
+</style>
+
+
+<style id="print-safe-padding">
+@media print {
+  body.print-mode .print-target {
+    padding: 6mm !important;     /* keep borders away from page edge */
+    box-sizing: border-box !important;
+    background: #fff !important;
+    box-shadow: none !important;
+  }
+}
+</style>
+
+
+<style id="print-heading-margin-fix">
+@media print {
+  body.print-mode .print-target h1,
+  body.print-mode .print-target h2,
+  body.print-mode .print-target h3 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+}
+</style>
+
+
+<style id="print-table-color">
+@media print {
+  table, th, td {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background-color: inherit !important;
+    color: inherit !important;
+  }
+}
+</style>
+
+
+<style id="print-hide-today">
+@media print {
+  .today {
+    background: none !important;
+    color: inherit !important;
+    font-weight: normal !important;
+    box-shadow: none !important;
+    border: 1px solid #000 !important; /* fallback border */
+  }
+}
+</style>
+
+
+<style id="holiday-red-style">
+.holiday { color: red !important; font-weight: 700; font-size: 12px; margin-left: 3px; }
+</style>
+
+
+<style id="date-center-and-holiday-badge">
+/* Center the date number perfectly */
+tbody tr.date-row td { text-align: center !important; vertical-align: middle !important; }
+tbody tr.date-row td strong {
+  display: inline-block;
+  width: 100%;
+  text-align: center !important;
+  line-height: 1.15;
+}
+
+/* Prettier holiday badge (red text, subtle pill) */
+.holiday {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #d10000 !important;            /* vivid red text */
+  border: 1px solid #d10000;            /* thin red outline */
+  border-radius: 12px;                  /* pill shape */
+  background: rgba(209,0,0,0.06);       /* very light red tint */
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.holiday::before {
+  content: "●";
+  font-size: 10px;
+  margin-right: 4px;
+  position: relative;
+  top: -0.5px;
+  color: #d10000;
+}
+</style>
+
+
+<style id="holiday-badge-no-shift">
+/* Make date cells a positioning context and keep date number truly centered */
+tbody tr.date-row td { position: relative !important; text-align: center !important; vertical-align: middle !important; }
+tbody tr.date-row td strong {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+}
+
+/* Place holiday label as a small pill at top-right so it doesn't affect centering */
+tbody tr.date-row td .holiday {
+  position: absolute !important;
+  top: 4px; right: 6px;
+  display: inline-block;
+  padding: 2px 6px;
+  font-weight: 700;
+  font-size: 11px;
+  color: #d10000 !important;
+  border: 1px solid #d10000;
+  border-radius: 10px;
+  background: rgba(209,0,0,0.06);
+  white-space: nowrap;
+  line-height: 1;
+}
+tbody tr.date-row td .holiday::before {
+  content: "●";
+  font-size: 9px;
+  margin-right: 4px;
+  position: relative;
+  top: -0.5px;
+  color: #d10000;
+}
+</style>
+
+
+<style id="holiday-label-centered">
+/* Center-align all date numbers */
+tbody tr.date-row td {
+  position: relative !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+tbody tr.date-row td strong {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  line-height: 1.2 !important;
+  color: inherit;
+}
+
+/* Make holiday date numbers red */
+tbody tr.date-row td.holiday-day strong {
+  color: #d10000 !important;
+}
+
+/* Beautify holiday label and center it vertically */
+tbody tr.date-row td .holiday {
+  position: absolute !important;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-block;
+  padding: 3px 8px;
+  font-weight: 700;
+  font-size: 11px;
+  color: #d10000 !important;
+  border: 1px solid #d10000;
+  border-radius: 12px;
+  background: rgba(209,0,0,0.06);
+  white-space: nowrap;
+  line-height: 1.1;
+}
+tbody tr.date-row td .holiday::before {
+  content: "●";
+  font-size: 9px;
+  margin-right: 4px;
+  position: relative;
+  top: -0.5px;
+  color: #d10000;
+}
+</style>
+
+
+<style id="holiday-label-below-date">
+/* Center dates and labels vertically stacked */
+tbody tr.date-row td {
+  position: relative;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+tbody tr.date-row td strong {
+  display: block;
+  width: 100%;
+  text-align: center !important;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+/* Red color for holiday dates */
+tbody tr.date-row td.holiday-day strong {
+  color: #d10000 !important;
+}
+
+/* Place label below the date number with spacing */
+tbody tr.date-row td .holiday {
+  display: block;
+  margin-top: 4px;
+  padding: 2px 6px;
+  font-weight: 700;
+  font-size: 11px;
+  color: #d10000 !important;
+  border: 1px solid #d10000;
+  border-radius: 12px;
+  background: rgba(209,0,0,0.06);
+  white-space: nowrap;
+  line-height: 1.1;
+  text-align: center;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+tbody tr.date-row td .holiday::before {
+  content: "●";
+  font-size: 9px;
+  margin-right: 4px;
+  color: #d10000;
+}
+</style>
+
+
+<style id="holiday-top-bottom-centerfix">
+/* TD as positioning context */
+tbody tr.date-row td {
+  position: relative !important;
+  text-align: center !important;
+  vertical-align: top !important;
+  height: 46px !important;
+  padding: 2px !important;
+}
+
+/* Date number pinned near top (in normal flow) */
+tbody tr.date-row td strong {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  margin: 4px 0 0 0 !important;
+  line-height: 1.0 !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  color: inherit !important;
+}
+
+/* Holiday date in red */
+tbody tr.date-row td.holiday-day > strong {
+  color: #d10000 !important;
+}
+
+/* Holiday label pinned to bottom and centered robustly */
+tbody tr.date-row td .holiday {
+  position: absolute !important;
+  left: 0 !important;              /* span full width */
+  right: 0 !important;
+  bottom: 4px !important;
+  transform: none !important;      /* remove translate hack */
+  display: inline-block !important;
+  padding: 2px 6px !important;
+  font-weight: 700 !important;
+  font-size: 10.5px !important;
+  color: #d10000 !important;
+  border: 1px solid #d10000 !important;
+  border-radius: 10px !important;
+  background: rgba(209,0,0,0.08) !important;
+  white-space: nowrap !important;
+  line-height: 1.05 !important;
+  text-align: center !important;
+  width: fit-content !important;   /* shrink to content */
+  margin-left: auto !important;    /* center within full width */
+  margin-right: auto !important;
+  z-index: 2 !important;
+}
+tbody tr.date-row td .holiday::before {
+  content: "●" !important;
+  font-size: 8.5px !important;
+  margin-right: 4px !important;
+  color: #d10000 !important;
+}
+</style>
+
+
+
+
+
+<style id="print-show-h2">
+@media print {
+  .print-target h2 {
+    display: block !important;
+    visibility: visible !important;
+  }
+}
+</style>
+
+
+<style id="print-onepage-force">
+@media print {
+  /* Slightly smaller margins to gain space */
+  @page { size: A4 landscape; margin: 6mm; }
+
+  /* Global tightening for the selected month */
+  body.print-mode .print-target {
+    /* Use a slightly stronger zoom so dense months fit on one page */
+    zoom: 0.86 !important;
+  }
+
+  /* Title compact */
+  body.print-mode .print-target h2 {
+    font-size: 18px !important;
+    margin: 4px 0 6px 0 !important;
+    padding: 6px 0 !important;
+  }
+
+  /* Table compaction */
+  body.print-mode .print-target table {
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+  }
+  body.print-mode .print-target th,
+  body.print-mode .print-target td {
+    padding: 1px 2px !important;
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* Date row height & spacing */
+  body.print-mode .print-target tbody tr.date-row td {
+    height: 40px !important;
+    vertical-align: top !important;
+    padding-top: 2px !important;
+    padding-bottom: 0 !important;
+  }
+  body.print-mode .print-target tbody tr.date-row td strong {
+    margin-bottom: 4px !important;
+  }
+  body.print-mode .print-target tbody tr.date-row td .holiday {
+    padding: 1px 6px !important;
+    font-size: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Legend hidden on print to save space */
+  body.print-mode .print-target .legend { display: none !important; }
+
+  /* Avoid accidental page breaks within the month frame */
+  .month-frame, .legend, table, thead, tbody, tfoot, tr, h2 {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+</style>
+
+
+<style id="print-tight-top">
+@media print {
+  @page { size: A4 landscape; margin-top: 4mm; margin-bottom: 6mm; margin-left: 6mm; margin-right: 6mm; }
+
+  body.print-mode .print-target {
+    zoom: 0.85 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  body.print-mode .print-target h2 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 3px !important;
+    font-size: 17px !important;
+    line-height: 1.1 !important;
+  }
+}
+</style>
+
+
+<style id="print-fit-strict">
+@media print {
+  @page {
+    size: A4 landscape;
+    margin-top: 4mm;
+    margin-bottom: 5mm;
+    margin-left: 5mm;
+    margin-right: 5mm;
+  }
+
+  body.print-mode .print-target {
+    zoom: 0.83 !important;   /* 살짝 더 축소하여 모든 달이 한 장에 맞도록 */
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  body.print-mode .print-target h2 {
+    font-size: 17px !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 3px !important;
+    line-height: 1.05 !important;
+  }
+
+  body.print-mode .print-target th,
+  body.print-mode .print-target td {
+    padding: 1px 2px !important;
+    font-size: 10.5px !important;
+    line-height: 1.05 !important;
+  }
+
+  body.print-mode .print-target tbody tr.date-row td {
+    height: 38px !important;
+  }
+
+  /* 페이지 나눔 방지 */
+  .month-frame, table, thead, tbody, tfoot, tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+</style>
+
+</head><body>
+<!-- === MONTH 2026-01 START === -->
+<div class="month-frame"><h2>▣ 2026년 1월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2" class="holiday-day"><strong>1<span class="holiday">신정</span></strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-01 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-03 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-01 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-03 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-10 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-10 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-17 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-17 -->
+  <td></td>
+  <td><span class="short-name">증산</span></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-24 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-18 -->
+  <td><span class="short-name">증산</span></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-22 -->
+  <td></td>
+  <td><span class="short-name">창연</span></td>
+  <!-- col(11-12) = 2026-01-23 -->
+  <td><span class="short-name">창연</span></td>
+  <td><span class="short-name">창연</span></td>
+  <!-- col(13-14) = 2026-01-24 -->
+  <td><span class="short-name">창연</span></td>
+  <td><span class="short-name">창연</span></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-01-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-01-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-31 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-01 -->
+  <!-- col(1-2) = 2026-01-25 -->
+  <td><span class="short-name">창연</span></td>
+  <td><span class="short-name">창연</span></td>
+  <!-- col(3-4) = 2026-01-26 -->
+  <td><span class="short-name">창연</span></td>
+  <td><span class="short-name">창연</span></td>
+  <!-- col(5-6) = 2026-01-27 -->
+  <td><span class="short-name">창연</span></td>
+  <td></td>
+  <!-- col(7-8) = 2026-01-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-01-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-01-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-01-31 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-01 END === -->
+</div></div>
+<!-- === MONTH 2026-02 START === -->
+<div class="month-frame"><h2>▣ 2026년 2월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2" class="holiday-day"><strong>16<span class="holiday">설날 연휴</span></strong></td><td colspan="2" class="holiday-day"><strong>17<span class="holiday">설날</span></strong></td><td colspan="2" class="holiday-day"><strong>18<span class="holiday">설날 연휴</span></strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-02 -->
+  <!-- col(1-2) = 2026-02-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-02-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-02-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-02-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-02-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-02-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-02-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-02 END === -->
+</div></div>
+<!-- === MONTH 2026-03 START === -->
+<div class="month-frame"><h2>▣ 2026년 3월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2" class="holiday-day"><strong>1<span class="holiday">삼일절</span></strong></td><td colspan="2" class="holiday-day"><strong>2<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-03-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-03-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-03-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-03-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-03 -->
+  <!-- col(1-2) = 2026-03-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-03-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-03-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-03 END === -->
+</div></div>
+<!-- === MONTH 2026-04 START === -->
+<div class="month-frame"><h2>▣ 2026년 4월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-04 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-04 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-04 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-04 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-11 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-11 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-18 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-18 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-25 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-04-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-04-25 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-04 -->
+  <!-- col(1-2) = 2026-04-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-04-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-04-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-04-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-04-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-04 END === -->
+</div></div>
+<!-- === MONTH 2026-05 START === -->
+<div class="month-frame"><h2>▣ 2026년 5월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2" class="holiday-day"><strong>1<span class="holiday">근로자의 날</span></strong></td><td colspan="2"><strong>2</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-02 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-02 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2" class="holiday-day"><strong>5<span class="holiday">어린이날</span></strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-09 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-09 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-16 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-16 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-23 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-23 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2" class="holiday-day"><strong>24<span class="holiday">부처님 오신 날</span></strong></td><td colspan="2" class="holiday-day"><strong>25<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-30 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-05-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-05-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-05-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-05-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-05-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-05-30 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-05 -->
+  <!-- col(1-2) = 2026-05-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-05 END === -->
+</div></div>
+<!-- === MONTH 2026-06 START === -->
+<div class="month-frame"><h2>▣ 2026년 6월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2" class="holiday-day"><strong>6<span class="holiday">현충일</span></strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-06 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-06 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-06 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-06 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-13 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-13 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-20 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-20 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-27 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-06-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-06-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-06-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-06-27 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-06 -->
+  <!-- col(1-2) = 2026-06-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-06-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-06-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-06 END === -->
+</div></div>
+<!-- === MONTH 2026-07 START === -->
+<div class="month-frame"><h2>▣ 2026년 7월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-07 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-04 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-07 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-04 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-11 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-11 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-18 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-18 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-25 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-07-25 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-07 -->
+  <!-- col(1-2) = 2026-07-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-07-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-07-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-07-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-07-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-07-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-07 END === -->
+</div></div>
+<!-- === MONTH 2026-08 START === -->
+<div class="month-frame"><h2>▣ 2026년 8월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-01 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-01 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-08 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-08 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2" class="holiday-day"><strong>15<span class="holiday">광복절</span></strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-15 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-15 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>16</strong></td><td colspan="2" class="holiday-day"><strong>17<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-22 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-22 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-29 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-08-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-08-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-08-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-08-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-08-29 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-08 -->
+  <!-- col(1-2) = 2026-08-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-08-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-08 END === -->
+</div></div>
+<!-- === MONTH 2026-09 START === -->
+<div class="month-frame"><h2>▣ 2026년 9월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-09 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-05 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-09 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-05 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-12 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-12 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-19 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-19 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2" class="holiday-day"><strong>24<span class="holiday">추석 연휴</span></strong></td><td colspan="2" class="holiday-day"><strong>25<span class="holiday">추석</span></strong></td><td colspan="2" class="holiday-day"><strong>26<span class="holiday">추석 연휴</span></strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-26 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-09-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-09-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-09-26 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-09 -->
+  <!-- col(1-2) = 2026-09-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-09-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-09-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-09-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-09 END === -->
+</div></div>
+<!-- === MONTH 2026-10 START === -->
+<div class="month-frame"><h2>▣ 2026년 10월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2" class="holiday-day"><strong>3<span class="holiday">개천절</span></strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-10 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-03 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-10 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-03 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>4</strong></td><td colspan="2" class="holiday-day"><strong>5<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2" class="holiday-day"><strong>9<span class="holiday">한글날</span></strong></td><td colspan="2"><strong>10</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-10 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-10 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-17 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-17 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-24 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-24 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-31 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-10 -->
+  <!-- col(1-2) = 2026-10-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-10-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-10-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-10-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-10-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-10-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-10-31 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-10 END === -->
+</div></div>
+<!-- === MONTH 2026-11 START === -->
+<div class="month-frame"><h2>▣ 2026년 11월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-05 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-07 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-12 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-14 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-19 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-21 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-11-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-11-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-11-26 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-11-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-11-28 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-11 -->
+  <!-- col(1-2) = 2026-11-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-11-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-11 END === -->
+</div></div>
+<!-- === MONTH 2026-12 START === -->
+<div class="month-frame"><h2>▣ 2026년 12월 헬퍼 일정표</h2>
+<table>
+<colgroup>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+</colgroup>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-12 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-05 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-12 -->
+  <!-- col(1-2) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-01 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-02 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-03 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-04 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-05 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-12 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-06 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-07 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-08 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-09 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-10 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-11 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-12 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-19 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-13 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-14 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-15 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-16 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-17 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-18 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-19 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2" class="holiday-day"><strong>25<span class="holiday">성탄절</span></strong></td><td colspan="2"><strong>26</strong></td></tr><tr class="team1">
+  <!-- team1 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-26 -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-20 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-21 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-22 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-23 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-24 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = 2026-12-25 -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = 2026-12-26 -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1">
+  <!-- team1 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="team2">
+  <!-- team2 for 2026-12 -->
+  <!-- col(1-2) = 2026-12-27 -->
+  <td></td>
+  <td></td>
+  <!-- col(3-4) = 2026-12-28 -->
+  <td></td>
+  <td></td>
+  <!-- col(5-6) = 2026-12-29 -->
+  <td></td>
+  <td></td>
+  <!-- col(7-8) = 2026-12-30 -->
+  <td></td>
+  <td></td>
+  <!-- col(9-10) = 2026-12-31 -->
+  <td></td>
+  <td></td>
+  <!-- col(11-12) = - -->
+  <td></td>
+  <td></td>
+  <!-- col(13-14) = - -->
+  <td></td>
+  <td></td>
+</tr><tr class="staff row-collapsed"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<div class="legend">
+<span><span class="color-box team1-color"></span>1팀</span>
+<span><span class="color-box team2-color"></span>2팀</span>
+<span><span class="color-box staff-color"></span>직원</span>
+<!-- === MONTH 2026-12 END === -->
+</div></div>
+<script>
+// --- Auto-scroll to current month & mark today's date ---
+document.addEventListener('DOMContentLoaded', function(){
+  // Find month frame for current year/month from system clock
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1; // 1..12
+  const d = now.getDate();
+
+  // Locate the month frame whose <h2> contains "YYYY년 M월"
+  const re = new RegExp(String(y) + '\\s*년\\s*' + String(m) + '\\s*월');
+  let targetFrame = null;
+  document.querySelectorAll('.month-frame').forEach(frame => {
+    const h2 = frame.querySelector('h2');
+    if (h2 && re.test(h2.textContent)) targetFrame = frame;
+  });
+
+  if (targetFrame) {
+    // Scroll the month into view
+    targetFrame.scrollIntoView({behavior: 'smooth', block: 'start'});
+
+    // Highlight today's date cell within this month
+    // Assumes date numbers are in rows with class 'date-row' and inside <strong> elements.
+    const dateCells = targetFrame.querySelectorAll('tr.date-row td');
+    let todayCell = null;
+    dateCells.forEach(td => {
+      const s = td.querySelector('strong');
+      const num = s ? parseInt(s.textContent, 10) : NaN;
+      if (num === d) { todayCell = td; }
+    });
+    if (todayCell) {
+      todayCell.classList.add('today-cell');
+    }
+  }
+});
+</script><script>
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const re = new RegExp(String(y) + '\\s*년\\s*' + String(m) + '\\s*월');
+
+    let frame = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      if (h2 && re.test(h2.textContent)) frame = f;
+    });
+    if (!frame) return;
+
+    const dateRows = frame.querySelectorAll('tr.date-row');
+    let todayTd = null, todayRow = null, dayIdx = -1;
+    outer: for (const row of dateRows) {
+      const tds = Array.from(row.querySelectorAll('td'));
+      for (let i=0;i<tds.length;i++){
+        const s = tds[i].querySelector('strong');
+        const num = s ? parseInt(s.textContent, 10) : NaN;
+        if (num === d) {
+          todayTd = tds[i];
+          todayRow = row;
+          dayIdx = i;
+          break outer;
+        }
+      }
+    }
+    if (!todayTd || dayIdx < 0) return;
+
+    todayTd.classList.add('today-date', 'today-cell'); // keep "오늘" label
+
+    const leftCol = dayIdx * 2;
+    const rightCol = leftCol + 1;
+
+    let r1 = todayRow.nextElementSibling;
+    let r2 = r1 ? r1.nextElementSibling : null;
+    let r3 = r2 ? r2.nextElementSibling : null;
+
+    const rows = [r1, r2, r3].filter(Boolean);
+    if (rows.length !== 3) return;
+
+    function tagPair(tr, isBottom){
+      const cells = Array.from(tr.querySelectorAll('td'));
+      if (cells.length < rightCol+1) return;
+      cells[leftCol].classList.add('today-col-left');
+      cells[rightCol].classList.add('today-col-right');
+      if (isBottom){
+        cells[leftCol].classList.add('today-bottom-left');
+        cells[rightCol].classList.add('today-bottom-right');
+      }
+    }
+    tagPair(r1, false);
+    tagPair(r2, false);
+    tagPair(r3, true);
+  } catch (e) {
+    console.warn('today block highlight failed:', e);
+  }
+});
+</script><script>
+document.addEventListener('DOMContentLoaded', function(){
+  // For each month, find staff rows and minimize those with no text in any cell
+  document.querySelectorAll('.month-frame table').forEach(tbl => {
+    tbl.querySelectorAll('tr.staff').forEach(tr => {
+      const tds = Array.from(tr.querySelectorAll('td'));
+      // Consider a cell empty if its textContent (without NBSP) is empty
+      const allEmpty = tds.every(td => (td.textContent || '').replace(/\u00A0/g,'').trim() === '');
+      if (allEmpty) {
+        tr.classList.add('row-collapsed');
+      }
+    });
+  });
+});
+</script><script>
+(function(){
+  const URL = location.href.split('#')[0];
+  let lastTag = null, timer = null;
+
+  async function check(){
+    try {
+      const res = await fetch(URL, { method: 'HEAD', cache: 'no-cache' });
+      const tag = (res.headers.get('ETag') || res.headers.get('Last-Modified') || '') + '';
+      if (lastTag && tag && tag !== lastTag) {
+        location.reload();
+        return;
+      }
+      if (tag) lastTag = tag;
+    } catch (e) {
+      // ignore network errors
+    } finally {
+      timer = setTimeout(check, 12000000); // 60s
+    }
+  }
+
+  // Pause polling in background tabs; resume on focus
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (timer) { clearTimeout(timer); timer = null; }
+    } else {
+      check();
+    }
+  });
+
+  check();
+})();
+</script><script>
+(function(){
+  // Try several times after load to ensure layout is ready
+  const RETRIES = 8, INTERVAL = 200; // 8 tries x 200ms ≈ 1.6s
+
+  function parseTitle(txt){
+    const m = txt && txt.match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
+    return m ? {y: parseInt(m[1],10), mo: parseInt(m[2],10)} : null;
+  }
+  function findFrame(y, mo){
+    let target = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      const p = h2 ? parseTitle(h2.textContent) : null;
+      if (p && p.y === y && p.mo === mo) target = f;
+    });
+    return target;
+  }
+  function doScroll(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const mo = now.getMonth() + 1;
+    const f = findFrame(y, mo);
+    if (f){
+      try {
+        f.scrollIntoView({behavior:'smooth', block:'start', inline:'nearest'});
+      } catch(e){
+        f.scrollIntoView(true);
+      }
+      return true;
+    }
+    return false;
+  }
+  function retry(){
+    let tries = 0;
+    const tick = () => {
+      if (doScroll() || tries >= RETRIES) return;
+      tries++;
+      setTimeout(tick, INTERVAL);
+    };
+    // initial attempt after a frame
+    requestAnimationFrame(() => {
+      if (!doScroll()){
+        setTimeout(tick, INTERVAL);
+      }
+    });
+  }
+
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', retry);
+  } else {
+    retry();
+  }
+  window.addEventListener('load', retry);
+})();
+</script><script>
+/*ID:autoScroll*/
+(function(){
+  const RETRIES = 8, INTERVAL = 200; // ~1.6s total
+  function parseTitle(txt){
+    const m = txt && txt.match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
+    return m ? {y: parseInt(m[1],10), mo: parseInt(m[2],10)} : null;
+  }
+  function findFrame(y, mo){
+    let target = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      const p = h2 ? parseTitle(h2.textContent) : null;
+      if (p && p.y === y && p.mo === mo) target = f;
+    });
+    return target;
+  }
+  function doScroll(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const mo = now.getMonth() + 1;
+    const f = findFrame(y, mo);
+    if (f){
+      try { f.scrollIntoView({behavior:'smooth', block:'start', inline:'nearest'}); }
+      catch(e){ f.scrollIntoView(true); }
+      return true;
+    }
+    return false;
+  }
+  function retry(){
+    let tries = 0;
+    const tick = () => {
+      if (doScroll() || tries >= RETRIES) return;
+      tries++; setTimeout(tick, INTERVAL);
+    };
+    requestAnimationFrame(()=>{ if (!doScroll()) setTimeout(tick, INTERVAL); });
+  }
+  if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', retry); }
+  else { retry(); }
+  window.addEventListener('load', retry);
+})();
+</script><script>
+/*ID:todayBlock*/
+document.addEventListener('DOMContentLoaded', function(){
+  try {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = now.getMonth() + 1;
+    const d = now.getDate();
+    const re = new RegExp(String(y) + '\\s*년\\s*' + String(m) + '\\s*월');
+    let frame = null;
+    document.querySelectorAll('.month-frame').forEach(f => {
+      const h2 = f.querySelector('h2');
+      if (h2 && re.test(h2.textContent)) frame = f;
+    });
+    if (!frame) return;
+
+    const dateRows = frame.querySelectorAll('tr.date-row');
+    let todayTd = null, todayRow = null, dayIdx = -1;
+    outer: for (const row of dateRows) {
+      const tds = Array.from(row.querySelectorAll('td'));
+      for (let i=0;i<tds.length;i++){
+        const s = tds[i].querySelector('strong');
+        const num = s ? parseInt(s.textContent, 10) : NaN;
+        if (num === d) { todayTd = tds[i]; todayRow = row; dayIdx = i; break outer; }
+      }
+    }
+    if (!todayTd || dayIdx < 0) return;
+
+    // mark top cell and keep "오늘" label (mint color set in CSS)
+    todayTd.classList.add('today-date', 'today-cell');
+
+    // left/right AM/PM columns (14 tds total)
+    const leftCol = dayIdx * 2;
+    const rightCol = leftCol + 1;
+
+    let r1 = todayRow.nextElementSibling; // team1
+    let r2 = r1 ? r1.nextElementSibling : null; // team2
+    let r3 = r2 ? r2.nextElementSibling : null; // staff
+    const rows = [r1, r2, r3].filter(Boolean);
+    if (rows.length !== 3) return;
+
+    function tagPair(tr, isBottom){
+      const cells = Array.from(tr.querySelectorAll('td'));
+      if (cells.length < rightCol+1) return;
+      cells[leftCol].classList.add('today-col-left');
+      cells[rightCol].classList.add('today-col-right');
+      if (isBottom){
+        cells[leftCol].classList.add('today-bottom-left');
+        cells[rightCol].classList.add('today-bottom-right');
+      }
+    }
+    tagPair(r1, false);
+    tagPair(r2, false);
+    tagPair(r3, true);
+  } catch (e) { console.warn('today block highlight failed:', e); }
+});
+</script><script>
+/*ID:collapseStaff*/
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.month-frame table').forEach(tbl => {
+    tbl.querySelectorAll('tr.staff').forEach(tr => {
+      const tds = Array.from(tr.querySelectorAll('td'));
+      const allEmpty = tds.every(td => (td.textContent || '').replace(/\u00A0/g,'').trim() === '');
+      if (allEmpty) tr.classList.add('row-collapsed');
+    });
+  });
+});
+</script><script>
+/*ID:holidayTag*/
+document.addEventListener('DOMContentLoaded', function(){
+  const isHoliday = (s) => {
+    if (!s) return false;
+    return s.replace(/\u00A0/g,'').replace(/\s+/g,'').trim() === '휴무';
+  };
+  document.querySelectorAll('td').forEach(td=>{
+    const raw = (td.textContent||'');
+    if (isHoliday(raw)) {
+      let span = td.querySelector('span');
+      if (!span) {
+        span = document.createElement('span');
+        span.className = 'short-name holiday';
+        span.textContent = '휴무';
+        td.innerHTML = '';
+        td.appendChild(span);
+      } else {
+        span.classList.add('holiday');
+        span.textContent = '휴무';
+      }
+    }
+  });
+});
+</script><script>
+/*ID:autoRefreshUpdatesOnly*/
+(function(){
+  const URL = location.href.split('#')[0];
+  let lastTag = null, timer = null;
+  async function check(){
+    try {
+      const res = await fetch(URL, { method: 'HEAD', cache: 'no-cache' });
+      const tag = (res.headers.get('ETag') || res.headers.get('Last-Modified') || '') + '';
+      if (lastTag && tag && tag !== lastTag) { location.reload(); return; }
+      if (tag) lastTag = tag;
+    } catch(e) { /* ignore */ }
+    finally { timer = setTimeout(check, 60000); } // 60s
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) { if (timer) { clearTimeout(timer); timer = null; } }
+    else { check(); }
+  });
+  check();
+})();
+</script><script id="print-logic">
+(function(){
+  const btn = document.getElementById('printBtn');
+  if(!btn) return;
+
+  function findMonthFrame(year, month){
+    // month is 1..12 (string or number). Title format: "▣ 2026년 3월 헬퍼 일정표"
+    const label = `${year}년 ${parseInt(month,10)}월`;
+    const headers = Array.from(document.querySelectorAll('.month-frame > h2'));
+    for (const h of headers){
+      if (h.textContent.includes(label)) return h.closest('.month-frame');
+    }
+    return null;
+  }
+
+  btn.addEventListener('click', () => {
+    const raw = prompt('출력할 연도-월을 입력하세요 (예: 2025-03)');
+    if (!raw) return;
+
+    const m = raw.trim().match(/^(\d{4})[-./\s]?(\d{1,2})$/);
+    if (!m) {
+      alert('입력 형식은 "YYYY-MM" 입니다. 예: 2025-03');
+      return;
+    }
+
+    const y = m[1];
+    const mm = String(parseInt(m[2], 10)); // remove leading zeros for matching "3월"
+    const frame = findMonthFrame(y, mm);
+    if (!frame) {
+      alert(`${y}년 ${mm}월 일정표를 찾지 못했습니다.`);
+      return;
+    }
+
+    // 타겟 지정 후 인쇄
+    document.querySelectorAll('.print-target').forEach(el => el.classList.remove('print-target'));
+    frame.classList.add('print-target');
+    document.body.classList.add('print-mode');
+
+    // 인쇄 끝나면 복구
+    const cleanup = () => {
+      document.body.classList.remove('print-mode');
+      frame.classList.remove('print-target');
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+
+    window.print();
+  });
+})();
+</script>
+<button id="printFab" title="프린트" onclick="(function(){
+  function findMonthFrame(year, month){
+    var label = year + '년 ' + parseInt(month,10) + '월';
+    var headers = Array.prototype.slice.call(document.querySelectorAll('.month-frame > h2, h2'));
+    for (var i=0;i<headers.length;i++){
+      var h = headers[i];
+      if (h.textContent && h.textContent.indexOf(label) !== -1){
+        return (h.closest && h.closest('.month-frame')) ? h.closest('.month-frame') : (h.parentElement || h);
+      }
+    }
+    return null;
+  }
+  var raw = prompt('출력할 연도-월을 입력하세요 (예: 2025-03)');
+  if (!raw) return;
+  var m = raw.trim().match(/^(\d{4})[-.\/\s]?(\d{1,2})$/);
+  if (!m){ alert('입력 형식은 \&quot;YYYY-MM&quot; 입니다. 예: 2025-03'); return; }
+  var y = m[1], mm = String(parseInt(m[2],10));
+  var frame = findMonthFrame(y, mm);
+  if (!frame){ alert(y+'년 '+mm+'월 일정표를 찾지 못했습니다.'); return; }
+  Array.prototype.forEach.call(document.querySelectorAll('.print-target'), function(el){ el.classList.remove('print-target'); });
+  frame.classList.add('print-target');
+  document.body.classList.add('print-mode');
+  var cleanup = function(){
+    document.body.classList.remove('print-mode');
+    frame.classList.remove('print-target');
+    window.removeEventListener('afterprint', cleanup);
+  };
+  window.addEventListener('afterprint', cleanup);
+  window.print();
+})();">🖨️</button>
+<script id="print-fab-logic">
+(function(){
+  function ensurePrintLogic(){
+    if (document.getElementById('print-logic')) return true;
+    // Inject minimal print logic if original wasn't added
+    const s = document.createElement('script');
+    s.id = 'print-logic';
+    s.textContent = `(${function(){
+      function findMonthFrame(year, month){
+        const label = year + '년 ' + parseInt(month,10) + '월';
+        const headers = Array.from(document.querySelectorAll('.month-frame > h2, h2'));
+        for (const h of headers){
+          if (h.textContent && h.textContent.includes(label)) return h.closest('.month-frame') || h.parentElement;
+        }
+        return null;
+      }
+      window.__printTargetMonth = function(){
+        const raw = prompt('출력할 연도-월을 입력하세요 (예: 2025-03)');
+        if (!raw) return;
+        const m = raw.trim().match(/^(\\d{4})[-.\/\\s]?(\\d{1,2})$/);
+        if (!m) { alert('입력 형식은 "YYYY-MM" 입니다. 예: 2025-03'); return; }
+        const y = m[1]; const mm = String(parseInt(m[2],10));
+        const frame = findMonthFrame(y, mm);
+        if (!frame) { alert(y+'년 '+mm+'월 일정표를 찾지 못했습니다.'); return; }
+        document.querySelectorAll('.print-target').forEach(el => el.classList.remove('print-target'));
+        frame.classList.add('print-target');
+        document.body.classList.add('print-mode');
+        const cleanup = () => {
+          document.body.classList.remove('print-mode');
+          frame.classList.remove('print-target');
+          window.removeEventListener('afterprint', cleanup);
+        };
+        window.addEventListener('afterprint', cleanup);
+        window.print();
+      };
+    }.toString()})();`;
+    document.body.appendChild(s);
+    return true;
+  }
+  function bindFab(){
+    const fab = document.getElementById('printFab');
+    if(!fab) return;
+    fab.addEventListener('click', function(){
+      if (!ensurePrintLogic()) return;
+      if (typeof window.__printTargetMonth === 'function'){
+        window.__printTargetMonth();
+      }
+    });
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bindFab);
+  } else {
+    bindFab();
+  }
+})();
+</script>
+
+<div id="printOverlay" role="dialog" aria-modal="true">
+  <div class="panel">
+    <h3>출력할 달 선택</h3>
+    <p>입력 또는 목록에서 선택하세요. 예: <code>2025-03</code></p>
+    <div class="row">
+      <input id="printMonthInput" type="text" placeholder="YYYY-MM 또는 YYYY.M">
+      <button id="printGoBtn" type="button">인쇄</button>
+      <button id="printCancelBtn" type="button" class="ghost">닫기</button>
+    </div>
+    <div class="list" id="printMonthList"></div>
+    <div class="row" style="margin-top:12px; justify-content: space-between;">
+      <button id="printCurrentViewportBtn" type="button" class="ghost" title="현재 보이는 영역 추정">현재 화면 인쇄</button>
+      <button id="printWholeBtn" type="button" class="ghost">전체 인쇄</button>
+    </div>
+  </div>
+</div>
+
+
+<script id="print-overlay-logic">
+(function(){
+  function $id(id){ return document.getElementById(id); }
+  function textHasYearMonth(t){
+    if(!t) return null;
+    const m = t.replace(/\s+/g,' ').match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
+    return m ? [m[1], String(parseInt(m[2],10))] : null;
+  }
+  function findAllMonthCandidates(){
+    const set = new Map(); // key "YYYY-MM" -> {y,m,el,label}
+    const nodes = Array.from(document.querySelectorAll('h1,h2,h3,[data-month],[id]'));
+    nodes.forEach(el => {
+      let y=null,m=null,label=null;
+      // 1) h 태그 한국어 포맷
+      const hm = textHasYearMonth(el.textContent || '');
+      if(hm){ y=hm[0]; m=hm[1]; label = `${y}년 ${m}월`; }
+      // 2) data-month 속성
+      if(!y && el.hasAttribute('data-month')){
+        const v = String(el.getAttribute('data-month'));
+        const mm = v.match(/(\d{4})[-/.](\d{1,2})/);
+        if(mm){ y=mm[1]; m=String(parseInt(mm[2],10)); label = `${y}년 ${m}월`; }
+      }
+      // 3) id에 연월 포함
+      if(!y && el.id){
+        const im = el.id.match(/(20\d{2}).*?([01]?\d)\b/);
+        if(im){ y=im[1]; m=String(parseInt(im[2],10)); label = `${y}년 ${m}월`; }
+      }
+      if(y && m){
+        const key = `${y}-${m.padStart(2,'0')}`;
+        if(!set.has(key)){
+          set.set(key, {y, m, el, label});
+        }
+      }
+    });
+    return Array.from(set.values()).sort((a,b)=> (a.y+a.m.padStart(2,'0')).localeCompare(b.y+b.m.padStart(2,'0')));
+  }
+  function findMonthFrameByYM(y, m){
+    // 1) 우선 .month-frame 내 제목 검색
+    const label = `${y}년 ${parseInt(m,10)}월`;
+    const monthFrames = Array.from(document.querySelectorAll('.month-frame'));
+    for(const fr of monthFrames){
+      const h = fr.querySelector('h1,h2,h3');
+      if(h && (h.textContent||'').includes(label)) return fr;
+    }
+    // 2) 제목 노드 자체가 후보인 경우
+    const heads = Array.from(document.querySelectorAll('h1,h2,h3'));
+    for(const h of heads){
+      if((h.textContent||'').includes(label)){
+        // 헤딩에서 섹션을 추정: 부모 중 block container
+        let p = h.parentElement;
+        while(p && p !== document.body){
+          const cs = getComputedStyle(p);
+          if(cs.display !== 'inline' && p.offsetHeight > 200){ return p; }
+          p = p.parentElement;
+        }
+        return h; // 최후 수단
+      }
+    }
+    // 3) data-month / id 기반 요소
+    const generic = document.querySelector(`[data-month*="${y}"][data-month*="${String(m).padStart(2,'0')}"]`)
+                  || document.querySelector(`[id*="${y}"][id*="${String(m).padStart(2,'0')}"]`);
+    if(generic){
+      let p = generic;
+      while(p && p !== document.body){
+        const cs = getComputedStyle(p);
+        if(cs.display !== 'inline' && p.offsetHeight > 200){ return p; }
+        p = p.parentElement;
+      }
+      return generic;
+    }
+    return null;
+  }
+  function clearTargets(){
+    document.querySelectorAll('.print-target').forEach(el => el.classList.remove('print-target'));
+    document.body.classList.remove('print-mode');
+  }
+  function printElement(el){
+    /* TEMP WRAP heading+next for printing */
+    var tmpWrap = null, movedNodes = [];
+    if (el && /^H[1-3]$/.test(el.tagName)) {
+      var next = el.nextElementSibling;
+      if (next) {
+        tmpWrap = document.createElement('div');
+        tmpWrap.className = 'print-temporary-wrap';
+        el.parentNode.insertBefore(tmpWrap, el);
+        movedNodes.push(el); movedNodes.push(next);
+        tmpWrap.appendChild(el);
+        tmpWrap.appendChild(next);
+        el = tmpWrap;
+      }
+    }
+
+    try {
+      // A4 landscape 너비(약) in CSS px, 96dpi 기준 297mm ≈ 1122px. 여백 3mm 양쪽 제외.
+      var DPI = 96; /* 브라우저 논리 DPI 가정 */
+      if (window.__globalPrintScale){ document.documentElement.style.setProperty('--print-scale', String(window.__globalPrintScale)); }
+      var A4Wpx = (297/25.4)*DPI;  /* landscape width ≈ 1122px */
+      var A4Hpx = (210/25.4)*DPI;  /* landscape height ≈ 794px */
+      var margin = 3;              /* mm */
+      var availW = A4Wpx - (margin/25.4*DPI*2);
+      var availH = A4Hpx - (margin/25.4*DPI*2);
+      var target = el || document.body;
+      var rect = target.getBoundingClientRect();
+      var w = Math.max(target.scrollWidth || 0, rect.width || 0);
+      var h = Math.max(target.scrollHeight || 0, rect.height || 0);
+      if (w>0 && h>0){
+        var sw = availW / w;
+        var sh = availH / h;
+        var raw = Math.min(sw, sh);
+        // try to fill page slightly more while avoiding 2nd page
+        var scale = Math.min(0.995, Math.max(0.78, raw * 0.998));
+        document.documentElement.style.setProperty('--print-scale', String(scale));
+      } else {
+        document.documentElement.style.setProperty('--print-scale', '0.86');
+      }
+    } catch(e) {
+      document.documentElement.style.setProperty('--print-scale', '0.88');
+    }
+
+    if(!el){ window.print(); return; }
+    clearTargets();
+    el.classList.add('print-target');
+    document.body.classList.add('print-mode');
+    const cleanup = () => {
+      clearTargets();
+      if (tmpWrap && movedNodes.length) {
+        // move children back before wrapper, then remove wrapper
+        for (var i=0;i<movedNodes.length;i++){
+          if (tmpWrap.parentNode) tmpWrap.parentNode.insertBefore(movedNodes[i], tmpWrap);
+        }
+        if (tmpWrap.parentNode) tmpWrap.parentNode.removeChild(tmpWrap);
+      }
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    window.print();
+  }
+  function computeGlobalScale(){
+    try{
+      var DPI = 96;
+      var A4Wpx = (297/25.4)*DPI;
+      var A4Hpx = (210/25.4)*DPI;
+      var margin = 8; // mm (increased to avoid clipped borders)
+      var availW = A4Wpx - (margin/25.4*DPI*2);
+      var availH = A4Hpx - (margin/25.4*DPI*2);
+      var items = findAllMonthCandidates();
+      if(!items.length) return null;
+      var minScale = 1.0;
+      for (var i=0;i<items.length;i++){
+        var y = items[i].y, m = items[i].m;
+        var fr = findMonthFrameByYM(y,m);
+        if(!fr) continue;
+        // 임시로 visiblility 확보(숨겨진 경우 치수 0 방지)
+        var prevDisp = fr.style.display || '';
+        if (getComputedStyle(fr).display === 'none') fr.style.display = 'block';
+        var rect = fr.getBoundingClientRect();
+        var w = Math.max(fr.scrollWidth || 0, rect.width || 0);
+        var h = Math.max(fr.scrollHeight || 0, rect.height || 0);
+        // 원래 display 복구
+        fr.style.display = prevDisp;
+        if (w>0 && h>0){
+          var sw = availW / w;
+          var sh = availH / h;
+          var s = Math.min(sw, sh);
+          if (s < minScale) minScale = s;
+        }
+      }
+      // 안전 범위 클램프 & 소폭 확대
+      var safe = Math.min(1.0, Math.max(0.6, minScale * 0.995));
+      return safe;
+    }catch(e){ return null; }
+  }
+
+  function openOverlay(){
+    const ov = $id('printOverlay');
+    if (!window.__globalPrintScale){
+      var g = computeGlobalScale();
+      if (g){ window.__globalPrintScale = g; document.documentElement.style.setProperty('--print-scale', String(g)); }
+    }
+    const list = $id('printMonthList');
+    list.innerHTML = '';
+    const items = findAllMonthCandidates();
+    if(items.length){
+      items.forEach(({y,m,label})=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.textContent = label;
+        div.onclick = () => {
+          const fr = findMonthFrameByYM(y,m);
+          if(!fr){ alert(`${y}년 ${m}월 영역을 찾지 못했습니다. 전체 인쇄로 진행합니다.`); printElement(null); return; }
+          printElement(fr);
+          closeOverlay();
+        };
+        list.appendChild(div);
+      });
+    } else {
+      const none = document.createElement('div');
+      none.style.color = '#888';
+      none.textContent = '감지된 월 제목이 없습니다. 아래 버튼으로 전체/현재화면 인쇄를 이용하세요.';
+      list.appendChild(none);
+    }
+    ov.style.display = 'flex';
+    $id('printMonthInput').focus();
+  }
+  function closeOverlay(){ $id('printOverlay').style.display = 'none'; }
+  function parseInputValue(v){
+    if(!v) return null;
+    const m = v.trim().match(/^(\d{4})\s*[-./]?\s*(\d{1,2})$/);
+    return m ? [m[1], String(parseInt(m[2],10))] : null;
+  }
+  // Expose entry points
+  window.__openPrintUI = openOverlay;
+  window.__printWhole = () => printElement(null);
+  window.__printCurrentViewport = () => {
+    // 화면 중심의 가장 큰 블록 요소를 찾아서 인쇄
+    const x = window.innerWidth/2, y= window.innerHeight/2;
+    const el = document.elementFromPoint(x,y);
+    let p = el;
+    let best = el, bestArea = 0;
+    while(p && p !== document.body){
+      const r = p.getBoundingClientRect();
+      const area = Math.max(0, Math.min(r.right, window.innerWidth) - Math.max(r.left, 0)) * Math.max(0, Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0));
+      if(area > bestArea && getComputedStyle(p).display !== 'inline'){ best = p; bestArea = area; }
+      p = p.parentElement;
+    }
+    printElement(best || el);
+  };
+  // Wire overlay buttons (delegated after DOM ready)
+  function bind(){
+    const go = $id('printGoBtn');
+    const cancel = $id('printCancelBtn');
+    const whole = $id('printWholeBtn');
+    const cur = $id('printCurrentViewportBtn');
+    const inp = $id('printMonthInput');
+    if(go) go.onclick = () => {
+      const res = parseInputValue(inp.value);
+      if(!res){ alert('형식 예: 2025-03'); return; }
+      const [y,m] = res;
+      const fr = findMonthFrameByYM(y,m);
+      if(!fr){ alert(`${y}년 ${m}월 영역을 찾지 못했습니다. 전체 인쇄로 진행합니다.`); printElement(null); closeOverlay(); return; }
+      printElement(fr); closeOverlay();
+    };
+    if(cancel) cancel.onclick = closeOverlay;
+    if(whole) whole.onclick = () => { printElement(null); closeOverlay(); };
+    if(cur) cur.onclick = () => { window.__printCurrentViewport(); closeOverlay(); };
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', bind);
+  } else { bind(); }
+  // Ensure FAB opens overlay
+  const fab = document.getElementById('printFab');
+  if(fab){ fab.onclick = function(){ window.__openPrintUI(); }; }
+})();
+</script>
+
+</body></html>
