@@ -789,6 +789,38 @@ tbody tr.date-row td .holiday::before {
 }
 </style>
 
+
+<style id="weekend-color-matched">
+/* === 주말 색상 (공휴일 빨강 #d10000 / 동일 채도의 파랑 #0048d1) === */
+
+/* 날짜행: 일요일(첫 칸) 빨강, 토요일(마지막 칸) 파랑 */
+tbody tr.date-row td:first-child strong {
+  color: #d10000 !important;
+}
+tbody tr.date-row td:last-child strong {
+  color: #0048d1 !important;
+}
+
+/* 헬퍼1, 헬퍼2, 직원행의 동일 칸도 같은 색 */
+tr.team1 td:nth-child(1),
+tr.team2 td:nth-child(1),
+tr.staff td:nth-child(1),
+tr.team1 td:nth-child(2),
+tr.team2 td:nth-child(2),
+tr.staff td:nth-child(2) {
+  color: #d10000 !important; /* 일요일 */
+}
+
+tr.team1 td:nth-child(13),
+tr.team2 td:nth-child(13),
+tr.staff td:nth-child(13),
+tr.team1 td:nth-child(14),
+tr.team2 td:nth-child(14),
+tr.staff td:nth-child(14) {
+  color: #0048d1 !important; /* 토요일 */
+}
+</style>
+
 </head><body>
 <!-- === MONTH 2026-01 START === -->
 <div class="month-frame"><h2>▣ 2026년 1월 헬퍼 일정표</h2>
