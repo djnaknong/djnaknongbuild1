@@ -5,7 +5,7 @@
 <title>2026 헬퍼 일정표</title>
 <style>
 table { border-collapse: collapse; width: 100%; margin-bottom: 30px; table-layout: fixed; }
-th, td { border: 1px solid #000; padding: 4px; vertical-align: middle; text-align: center; height: 32px; min-height: 32px; }
+th, td { border: 1px solid #ddd; padding: 4px; vertical-align: middle; text-align: center; height: 32px; min-height: 32px; }
 tr { height: 40px; }
 
 /* Adjust font sizes based on row type to improve readability relative to cell height */
@@ -18,8 +18,8 @@ tr.team1 td, tr.team2 td, tr.staff td { font-size: 11px; }
 
 /* team colours */
 /* Updated team colours */
-tr.team1 { background-color: #C9E4DE; }
-tr.team2 { background-color: #f7d9c4; }
+tr.team1 { background: linear-gradient(90deg, #E3F0FF 0%, #D6E9FF 100%); }
+tr.team2 { background: linear-gradient(90deg, #FFEDE0 0%, #FFE1CC 100%); }
 tr.staff { background-color: #dbcdf0; }
 
 /* highlight Sunday and Saturday in date rows */
@@ -53,8 +53,8 @@ h2 + table {
 .legend { margin-bottom: 30px; font-size: 0.9em; }
 .legend span { margin-right: 20px; }
 .legend .color-box { display: inline-block; width: 14px; height: 14px; border: 1px solid #000; margin-right: 4px; vertical-align: middle; }
-.legend .team1-color { background-color: #C9E4DE; }
-.legend .team2-color { background-color: #f7d9c4; }
+.legend .team1-color { background: linear-gradient(90deg, #E3F0FF 0%, #D6E9FF 100%); }
+.legend .team2-color { background: linear-gradient(90deg, #FFEDE0 0%, #FFE1CC 100%); }
 .legend .staff-color { background-color: #dbcdf0; }
 
 .holiday { color: #8A2BE2; }
@@ -183,7 +183,24 @@ tr.staff.row-collapsed td {
   width: 100%;
 }
 
+
+/* === Weekday header improved contrast === */
+tbody > tr:first-child td {
+  background: #E9EDF3; /* stronger neutral for visibility */
+}
+tbody > tr:first-child strong {
+  color: #111;
+  font-weight: 700;
+}
+tbody > tr:first-child td:first-child strong {
+  color: #C40000;
+}
+tbody > tr:first-child td:last-child strong {
+  color: #003A8F;
+}
+
 </style><style id="print-additions">
+
 /* ==== A4 전용 프린트 세팅 ==== */
 @page { size: A4 portrait; margin: 5mm; }
 
@@ -833,6 +850,317 @@ tr.team1 td:nth-child(14),
 tr.team2 td:nth-child(14),
 tr.staff td:nth-child(14) {
   color: #0048d1 !important; /* 토요일 */
+}
+</style>
+
+<style id="modern-theme">
+/* ===== Modern visual theme (design-only overrides) ===== */
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --lineStrong:#d1d5db;
+  --shadow:0 12px 34px rgba(0,0,0,.08);
+  --radius:16px;
+  --radiusSm:12px;
+  --focus:#2EC4B6;
+}
+
+/* Base */
+html, body{ background:var(--bg); }
+body{
+  margin:0;
+  padding:18px;
+  color:var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Month card */
+.month-frame{
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--card);
+  box-shadow:var(--shadow);
+  padding:14px 16px 16px 16px;
+  margin:0 0 22px 0;
+}
+
+/* Title */
+.month-frame > h2{
+  margin:0 0 10px 0;
+  padding:10px 10px;
+  border:none;
+  border-radius:var(--radiusSm);
+  background:linear-gradient(180deg, rgba(17,24,39,.04), rgba(17,24,39,0));
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:-0.2px;
+}
+
+/* Table wrapper feel */
+.month-frame h2 + table{
+  margin:0;
+  border:none;
+  border-radius:var(--radiusSm);
+  overflow:hidden;
+  background:#fff;
+}
+
+/* Grid lines + cell rhythm */
+table{
+  border-collapse:separate;
+  border-spacing:0;
+  width:100%;
+  table-layout:fixed;
+}
+th, td{
+  border:1px solid var(--line);
+  padding:6px 6px;
+  height:34px;
+  min-height:34px;
+  vertical-align:middle;
+  text-align:center;
+}
+
+/* Header row (요일) */
+tbody tr:first-child td{
+  background:#f3f4f6;
+  font-weight:800;
+  color:#111827;
+}
+
+/* Slight separation between weeks */
+tbody tr.date-row td{
+  background:#ffffff;
+}
+tbody tr.date-row + tr.team1 td,
+tbody tr.date-row + tr.team2 td,
+tbody tr.date-row + tr.staff td{
+  border-top-color:var(--lineStrong);
+}
+
+/* Team colors (softer, modern) */
+tr.team1{ background-color:#DFF3EF; }
+tr.team2{ background-color:#FDE8DB; }
+tr.staff{ background-color:#EEEAFB; }
+
+/* Hover for readability (screen only) */
+@media (hover:hover){
+  tr.team1:hover td, tr.team2:hover td, tr.staff:hover td{
+    box-shadow: inset 0 0 0 9999px rgba(17,24,39,.03);
+  }
+}
+
+/* Legend modern */
+.legend{
+  margin:10px 0 0 0;
+  padding:10px 12px;
+  border:1px solid var(--line);
+  border-radius:var(--radiusSm);
+  background:#fafafa;
+  font-size:12px;
+  color:var(--muted);
+}
+.legend span{ margin-right:16px; }
+.legend .color-box{
+  border:1px solid rgba(17,24,39,.12);
+  border-radius:6px;
+}
+
+/* Holiday pill (keep existing behavior but modernize look) */
+tbody tr.date-row td .holiday{
+  border-radius:999px !important;
+  border:1px solid rgba(209,0,0,.45) !important;
+  background: rgba(209,0,0,.06) !important;
+  box-shadow:none !important;
+}
+
+/* Today highlight (keep semantics, adjust aesthetics) */
+:root{ --todayMint: var(--focus); --todayMintBg: rgba(46,196,182,0.12); }
+.today-date{
+  border-width:2px !important;
+  box-shadow: 0 0 0 3px rgba(46,196,182,.10);
+}
+.today-bottom-left, .today-bottom-right{
+  box-shadow: 0 10px 22px rgba(46,196,182,.10);
+}
+
+/* Make long names a touch more readable on modern fonts */
+.long-name{ font-size:12px; }
+.short-name{ font-size:14px; }
+
+/* Print: preserve existing print fit rules; remove modern-only visuals */
+@media print{
+  html, body{ background:#fff !important; }
+  body{ padding:0 !important; }
+  .month-frame{
+    box-shadow:none !important;
+    background:#fff !important;
+    border:1px solid #000 !important;
+    border-radius:0 !important;
+  }
+  .month-frame > h2{
+    background:#fff !important;
+    border-radius:0 !important;
+    padding:8px 0 !important;
+    border-bottom:1px solid #000 !important;
+  }
+  th, td{ border-color:#000 !important; }
+  tbody tr:first-child td{ background:#fff !important; }
+  .legend{ background:#fff !important; box-shadow:none !important; }
+}
+</style>
+
+
+<style id="hide-staff-rows">
+/* === Hide staff rows completely (screen + print) === */
+tr.staff {
+  display: none !important;
+}
+/* Hide staff legend */
+.legend .staff-color {
+  display: none !important;
+}
+.legend span:has(.staff-color) {
+  display: none !important;
+}
+</style>
+<style id="today-overlay-style">
+/* Single overlay border for 'today' block (covers 날짜 + 1팀/2팀 헬퍼 rows) */
+.today-overlay{
+  position:absolute;
+  pointer-events:none;
+  border:2px solid var(--todayMint);
+  border-radius:12px;
+  box-sizing:border-box;
+  z-index:5;
+}
+</style>
+
+
+<style id="am-pm-clarity">
+/* === Make AM/PM split clearer (natural, not heavy) ===
+   Helper rows have 14 cells (7 days × AM/PM). We add a subtle divider after each AM cell.
+   Using inset shadow avoids border-collapse clipping. */
+.month-frame table tr.team1 td:nth-child(odd),
+.month-frame table tr.team2 td:nth-child(odd),
+.month-frame table tr.staff td:nth-child(odd) {
+  box-shadow: inset -2px 0 0 rgba(17, 24, 39, 0.18);
+}
+
+/* Slight micro-tint difference so AM/PM reads at a glance (very subtle) */
+.month-frame table tr.team1 td:nth-child(odd),
+.month-frame table tr.team2 td:nth-child(odd) {
+  background-image: linear-gradient(0deg, rgba(255,255,255,0.10), rgba(255,255,255,0.10));
+}
+.month-frame table tr.team1 td:nth-child(even),
+.month-frame table tr.team2 td:nth-child(even) {
+  background-image: linear-gradient(0deg, rgba(0,0,0,0.02), rgba(0,0,0,0.02));
+}
+
+/* Print: keep the same visibility */
+@media print {
+  .month-frame table tr.team1 td:nth-child(odd),
+  .month-frame table tr.team2 td:nth-child(odd),
+  .month-frame table tr.staff td:nth-child(odd) {
+    box-shadow: inset -2px 0 0 rgba(17, 24, 39, 0.22) !important;
+  }
+}
+</style>
+
+
+<style id="date-boundary-stronger">
+/* === Stronger boundary between dates (per day blocks) ===
+   Each day = 2 columns (AM/PM). We emphasize the boundary AFTER each day. */
+
+/* Screen */
+.month-frame table tr.team1 td:nth-child(2n),
+.month-frame table tr.team2 td:nth-child(2n),
+.month-frame table tr.date-row td:nth-child(2n) {
+  box-shadow: inset -3px 0 0 rgba(17, 24, 39, 0.35);
+}
+
+/* Print */
+@media print {
+  .month-frame table tr.team1 td:nth-child(2n),
+  .month-frame table tr.team2 td:nth-child(2n),
+  .month-frame table tr.date-row td:nth-child(2n) {
+    box-shadow: inset -3px 0 0 rgba(17, 24, 39, 0.45) !important;
+  }
+}
+</style>
+
+
+<style id="grid-consistency-v7">
+/* === V7: Consistent, prettier, higher-readability grid ===
+   Goals:
+   1) One coherent grid system (no mixed shadow/border artifacts)
+   2) Clear AM/PM within a day (subtle)
+   3) Clear day-to-day boundaries (slightly stronger, consistent)
+*/
+
+/* 1) Base grid lines (soft, consistent) */
+.month-frame table {
+  border-collapse: separate !important;   /* prevents border/round clipping and keeps lines crisp */
+  border-spacing: 0 !important;
+}
+.month-frame table th,
+.month-frame table td {
+  border: 1px solid rgba(17, 24, 39, 0.14) !important;
+  box-shadow: none !important;            /* override prior shadows (AM/PM/date dividers) */
+}
+
+/* 2) AM/PM: make it readable but not noisy
+   - AM cells get a barely-tinted overlay
+   - Separator between AM and PM is a thin, light line
+*/
+.month-frame table tr.team1 td:nth-child(odd),
+.month-frame table tr.team2 td:nth-child(odd),
+.month-frame table tr.date-row td:nth-child(odd) {
+  background-image: linear-gradient(0deg, rgba(255,255,255,0.14), rgba(255,255,255,0.14)) !important;
+}
+.month-frame table tr.team1 td:nth-child(odd),
+.month-frame table tr.team2 td:nth-child(odd),
+.month-frame table tr.date-row td:nth-child(odd) {
+  border-right-color: rgba(17, 24, 39, 0.20) !important; /* AM|PM split */
+}
+
+/* 3) Day boundary: after each PM cell (every 2nd cell), slightly stronger line */
+.month-frame table tr.team1 td:nth-child(2n),
+.month-frame table tr.team2 td:nth-child(2n),
+.month-frame table tr.date-row td:nth-child(2n) {
+  border-right-width: 2px !important;
+  border-right-color: rgba(17, 24, 39, 0.26) !important;
+}
+
+/* Avoid extra-strong line at the far right edge */
+.month-frame table tr.team1 td:last-child,
+.month-frame table tr.team2 td:last-child,
+.month-frame table tr.date-row td:last-child {
+  border-right-width: 1px !important;
+  border-right-color: rgba(17, 24, 39, 0.14) !important;
+}
+
+/* Print: keep same system, slightly bump contrast for printers */
+@media print {
+  .month-frame table th,
+  .month-frame table td {
+    border-color: rgba(0,0,0,0.22) !important;
+  }
+  .month-frame table tr.team1 td:nth-child(2n),
+  .month-frame table tr.team2 td:nth-child(2n),
+  .month-frame table tr.date-row td:nth-child(2n) {
+    border-right-color: rgba(0,0,0,0.35) !important;
+  }
+  .month-frame table tr.team1 td:nth-child(odd),
+  .month-frame table tr.team2 td:nth-child(odd),
+  .month-frame table tr.date-row td:nth-child(odd) {
+    border-right-color: rgba(0,0,0,0.28) !important;
+  }
 }
 </style>
 
@@ -4030,10 +4358,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let r1 = todayRow.nextElementSibling;
     let r2 = r1 ? r1.nextElementSibling : null;
-    let r3 = r2 ? r2.nextElementSibling : null;
 
-    const rows = [r1, r2, r3].filter(Boolean);
-    if (rows.length !== 3) return;
+    const rows = [r1, r2].filter(Boolean);
+    if (rows.length !== 2) return;
 
     function tagPair(tr, isBottom){
       const cells = Array.from(tr.querySelectorAll('td'));
@@ -4046,8 +4373,36 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     }
     tagPair(r1, false);
-    tagPair(r2, false);
-    tagPair(r3, true);
+    tagPair(r2, true);
+
+    // Draw a single rounded rectangle overlay so the border never gets clipped
+    const monthFrame = todayRow.closest('.month-frame');
+    if (monthFrame) {
+      monthFrame.style.position = monthFrame.style.position || 'relative';
+      // remove existing overlay if any (re-run safe)
+      monthFrame.querySelectorAll('.today-overlay').forEach(el => el.remove());
+
+      const tl = todayTd.getBoundingClientRect();
+      const brCells = Array.from(r2.querySelectorAll('td'));
+      if (brCells.length >= rightCol+1) {
+        const br = brCells[rightCol].getBoundingClientRect();
+        const host = monthFrame.getBoundingClientRect();
+
+        const pad = 0; // keep tight to cells
+        const left = (tl.left - host.left) - pad;
+        const top  = (tl.top  - host.top ) - pad;
+        const width  = (br.right - tl.left) + pad*2;
+        const height = (br.bottom - tl.top) + pad*2;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'today-overlay';
+        overlay.style.left = left + 'px';
+        overlay.style.top = top + 'px';
+        overlay.style.width = width + 'px';
+        overlay.style.height = height + 'px';
+        monthFrame.appendChild(overlay);
+      }
+    }
   } catch (e) {
     console.warn('today block highlight failed:', e);
   }
@@ -4229,11 +4584,11 @@ document.addEventListener('DOMContentLoaded', function(){
     const leftCol = dayIdx * 2;
     const rightCol = leftCol + 1;
 
-    let r1 = todayRow.nextElementSibling; // team1
-    let r2 = r1 ? r1.nextElementSibling : null; // team2
-    let r3 = r2 ? r2.nextElementSibling : null; // staff
-    const rows = [r1, r2, r3].filter(Boolean);
-    if (rows.length !== 3) return;
+    let r1 = todayRow.nextElementSibling;
+    let r2 = r1 ? r1.nextElementSibling : null;
+
+    const rows = [r1, r2].filter(Boolean);
+    if (rows.length !== 2) return;
 
     function tagPair(tr, isBottom){
       const cells = Array.from(tr.querySelectorAll('td'));
@@ -4246,8 +4601,36 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     }
     tagPair(r1, false);
-    tagPair(r2, false);
-    tagPair(r3, true);
+    tagPair(r2, true);
+
+    // Draw a single rounded rectangle overlay so the border never gets clipped
+    const monthFrame = todayRow.closest('.month-frame');
+    if (monthFrame) {
+      monthFrame.style.position = monthFrame.style.position || 'relative';
+      // remove existing overlay if any (re-run safe)
+      monthFrame.querySelectorAll('.today-overlay').forEach(el => el.remove());
+
+      const tl = todayTd.getBoundingClientRect();
+      const brCells = Array.from(r2.querySelectorAll('td'));
+      if (brCells.length >= rightCol+1) {
+        const br = brCells[rightCol].getBoundingClientRect();
+        const host = monthFrame.getBoundingClientRect();
+
+        const pad = 0; // keep tight to cells
+        const left = (tl.left - host.left) - pad;
+        const top  = (tl.top  - host.top ) - pad;
+        const width  = (br.right - tl.left) + pad*2;
+        const height = (br.bottom - tl.top) + pad*2;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'today-overlay';
+        overlay.style.left = left + 'px';
+        overlay.style.top = top + 'px';
+        overlay.style.width = width + 'px';
+        overlay.style.height = height + 'px';
+        monthFrame.appendChild(overlay);
+      }
+    }
   } catch (e) { console.warn('today block highlight failed:', e); }
 });
 </script><script>
