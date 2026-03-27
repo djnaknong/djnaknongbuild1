@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1" name="viewport">
+<html lang="ko">
+<head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>2026 헬퍼 일정표</title>
 <style>
 /* =====================================================
@@ -16,7 +17,7 @@ body {
   background: linear-gradient(160deg, #FFF8F2 0%, #F3F0FF 100%);
   min-height: 100vh;
   height: 100vh;
-  overflow: hidden;
+  overflow: clip;
   color: #2e2640;
   font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR",
                "Malgun Gothic", system-ui, sans-serif;
@@ -120,17 +121,7 @@ body {
 }
 
 /* ── 월 제목 */
-.month-frame > h2 {
-  margin: 0;
-  padding: 10px 18px 10px;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: -0.3px;
-  color: #5c4e8a;
-  background: linear-gradient(90deg, #F5F0FF 0%, #FFF5F0 100%);
-  border-bottom: 1.5px solid #E8E2F5;
-  text-align: center;
-}
+.month-frame > h2 { display: none; }
 
 /* ── 테이블 */
 table {
@@ -344,97 +335,9 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 
 /* ── 인쇄 */
 
-/* ── 인쇄 팝업 오버레이 */
-#printOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(40, 30, 70, 0.45);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999999;
-  backdrop-filter: blur(2px);
-}
-#printOverlay.show-overlay {
-  display: flex;
-}
-#printOverlay .panel {
-  width: min(480px, 92vw);
-  max-height: 80vh;
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 16px 48px rgba(80, 50, 160, 0.2);
-  padding: 24px 20px 20px;
-}
-#printOverlay h3 {
-  margin: 0 0 6px;
-  font-size: 17px;
-  font-weight: 800;
-  color: #3a2e6a;
-}
-#printOverlay p {
-  margin: 0 0 14px;
-  color: #7c6fa0;
-  font-size: 13px;
-}
-#printOverlay .row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-#printOverlay input[type="text"] {
-  flex: 1;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1.5px solid #DDD0F8;
-  font-size: 14px;
-  outline: none;
-  color: #2e2640;
-}
-#printOverlay input[type="text"]:focus {
-  border-color: #7c5cbf;
-}
-#printOverlay button {
-  padding: 10px 14px;
-  border-radius: 10px;
-  border: none;
-  background: #7c5cbf;
-  color: #fff;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 13px;
-  white-space: nowrap;
-}
-#printOverlay button.ghost {
-  background: #F3EFF9;
-  color: #5c4e8a;
-  border: 1px solid #DDD0F8;
-}
-#printOverlay button:hover { opacity: 0.88; }
-#printOverlay .list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-#printOverlay .item {
-  border: 1.5px solid #EDE8F8;
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 600;
-  color: #3a2e6a;
-  text-align: center;
-  transition: background .15s;
-}
-#printOverlay .item:hover {
-  background: #F3EFF9;
-  border-color: #7c5cbf;
-}
 
-@page { size: A4 landscape; margin: 6mm; }
+
+@page { size: A4 landscape; margin: 0; }
 @media print {
   *, *::before, *::after {
     -webkit-print-color-adjust: exact !important;
@@ -443,63 +346,95 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
   html, body {
     background: #fff !important;
     margin: 0 !important; padding: 0 !important;
+    width: 297mm !important; height: 210mm !important;
     overflow: visible !important;
   }
   /* UI 요소 숨김 */
-  #printOverlay, #printFab, #printControls,
-  #editorFab, #saveHtmlBtn, #editBanner { display: none !important; }
+  #printFab, #printControls, #monthNav, #monthTabs,
+  #editorFab, #saveHtmlBtn, #editBanner,
+  #printScaleUI { display: none !important; }
 
   /* 선택 월 인쇄: 나머지 숨기고 대상만 표시 */
-  /* 선택월 인쇄 */
-  body.print-mode .month-frame   { display: none !important; }
-  body.print-mode .print-target  { display: block !important; }
-  /* 전체 인쇄 시 모든 월 표시 */
+  body.print-mode .month-frame  { display: none !important; }
+  /* 전체 인쇄 시 비활성 월 숨김 */
   body:not(.print-mode) .month-frame { display: none !important; }
-  body:not(.print-mode) .month-frame.active { display: flex !important; }
+  body:not(.print-mode) .month-frame.active { display: block !important; }
 
-  /* 잘림 방지: 모든 overflow 해제 */
+  /* 인쇄 대상 — CSS variable zoom으로 꽉 채움 */
+  body.print-mode .print-target {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    transform-origin: top left !important;
+    zoom: var(--print-zoom, 1) !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important; padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* 잘림 방지 */
   .month-frame, .month-frame * { overflow: visible !important; }
 
-  /* 인쇄 대상 스타일 */
-  .print-target {
-    margin: 0 !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    border: 1.5px solid #CEC5EC !important;
-    border-radius: 8px !important;
-    background: #fff !important;
-    transform-origin: top left !important;
-    break-inside: avoid !important;
-  }
+  /* 오늘 표시 제거 */
   .today-cell strong::after { display: none !important; }
+  .today-overlay { display: none !important; }
+  .month-frame > h2 { display: none !important; }
+  .__printTitleInjected { font-size:16px !important; font-weight:800 !important; color:#333 !important; padding:6px 0 4px !important; }
+  /* 인쇄용 테이블 테두리 강화 — 모든 셀렉터 명시 */
+  .print-target table,
+  body.print-mode .print-target table { border-collapse: collapse !important; }
+
+  .print-target table th,
+  .print-target table td,
+  .print-target table tr td,
+  .print-target table tr th,
+  body.print-mode table th,
+  body.print-mode table td { border: 1px solid #888 !important; }
+
+  /* 주 구분선 */
+  body.print-mode tbody > tr:first-child td,
+  .print-target tbody > tr:first-child td { border-bottom: 2px solid #444 !important; }
+  body.print-mode tbody tr.date-row td,
+  .print-target tbody tr.date-row td { border-top: 2px solid #444 !important; }
+
+  /* 달력 외곽 */
+  body.print-mode .print-target { border: 2px solid #444 !important; }
+
+  /* 팀 행 배경색 유지 */
+  body.print-mode tr.team1 td { background: #E8F0FF !important; }
+  body.print-mode tr.team2 td { background: #FFF0E8 !important; }
+
+
 }
 </style>
-</head><body class="edit-mode">
+</head><body>
 <div id="monthNav">
-  <button id="navPrev">←</button>
-  <div id="navTitle">2026년 3월 헬퍼 일정표</div>
-  <button id="navNext">→</button>
+  <button id="navPrev">&#8592;</button>
+  <div id="navTitle">2026년 1월 헬퍼 일정표</div>
+  <button id="navNext">&#8594;</button>
 </div>
-<div id="monthTabs"><button class="month-tab">1월</button><button class="month-tab">2월</button><button class="month-tab active">3월</button><button class="month-tab">4월</button><button class="month-tab">5월</button><button class="month-tab">6월</button><button class="month-tab">7월</button><button class="month-tab">8월</button><button class="month-tab">9월</button><button class="month-tab">10월</button><button class="month-tab">11월</button><button class="month-tab">12월</button></div>
+<div id="monthTabs"></div>
 <div class="month-frame"><h2>2026년 1월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
-<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td class="holiday-day" colspan="2"><strong>1<span class="holiday">신정</span></strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td></tr><tr class="team1"><td></td><td><span class="short-name"></span></td><td><span class="short-name"></span></td><td><span class="short-name"></span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td></tr><tr class="date-row"><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">성효</span></td></tr><tr class="team2"><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td></tr><tr class="team1"><td><span class="short-name">성효</span></td><td><span class="short-name">성효</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">예진</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">증산</span></td></tr><tr class="date-row"><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td></tr><tr class="team1"><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td></td></tr><tr class="team2"><td><span class="short-name">증산</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">다불</span></td></tr><tr class="date-row"><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td class="holiday-day" colspan="2"><strong>1<span class="holiday">신정</span></strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td></tr><tr class="team1"><td></td><td><span class="short-name"></span></td><td><span class="short-name"></span></td><td><span class="short-name"></span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td></tr><tr class="date-row"><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">성효</span></td></tr><tr class="team2"><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td></tr><tr class="team1"><td><span class="short-name">성효</span></td><td><span class="short-name">성효</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">예진</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">증산</span></td></tr><tr class="date-row"><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td></tr><tr class="team1"><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td></td></tr><tr class="team2"><td><span class="short-name">증산</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">다불</span></td></tr><tr class="date-row"><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
 <span><span class="color-box team1-color"></span>1팀</span>
 <span><span class="color-box team2-color"></span>2팀</span>
@@ -507,66 +442,66 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 2월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
-<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">&nbsp;</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td></td><td></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td class="holiday-day" colspan="2"><strong>16<span class="holiday">설날 연휴</span></strong></td><td class="holiday-day" colspan="2"><strong>17<span class="holiday">설날</span></strong></td><td class="holiday-day" colspan="2"><strong>18<span class="holiday">설날 연휴</span></strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">청수</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1"><td><span class="short-name">청수</span></td><td><span class="short-name">인경</span></td><td><span class="short-name">인경</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td><span class="short-name">두석</span></td><td><span class="short-name">두석</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">성안</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">증산</span></td></tr></tbody></table>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td><span class="short-name">도립</span></td><td><span class="short-name">도립</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text"> </span></td><td><span class="offday-text"> </span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td></td><td></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">중앙</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td class="holiday-day" colspan="2"><strong>16<span class="holiday">설날 연휴</span></strong></td><td class="holiday-day" colspan="2"><strong>17<span class="holiday">설날</span></strong></td><td class="holiday-day" colspan="2"><strong>18<span class="holiday">설날 연휴</span></strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">청수</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1"><td><span class="short-name">청수</span></td><td><span class="short-name">인경</span></td><td><span class="short-name">인경</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td><span class="short-name">두석</span></td><td><span class="short-name">두석</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">성안</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">증산</span></td></tr></tbody></table>
 <div class="legend">
 <span><span class="color-box team1-color"></span>1팀</span>
 <span><span class="color-box team2-color"></span>2팀</span>
 </div></div>
-<div class="month-frame active" style="position: relative;"><h2>2026년 3월 헬퍼 일정표</h2>
+<div class="month-frame"><h2>2026년 3월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
-<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td class="holiday-day" colspan="2"><strong>1<span class="holiday">삼일절</span></strong></td><td class="holiday-day" colspan="2"><strong>2<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1"><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td></td><td></td><td></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td></tr><tr class="team2"><td><span class="short-name">증산</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1"><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">성효</span></td><td><span class="short-name">성효</span></td><td><span class="short-name">다불</span></td></tr><tr class="team2"><td></td><td></td><td></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">상진</span></td><td><span class="short-name">상진</span></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">동곡</span></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2" class="today-cell"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">인형</span></td><td><span class="short-name">인형</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td></td><td><span class="short-name">울림</span></td><td></td><td><span class="short-name">남산</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td></td><td></td><td></td><td><span class="short-name">양지</span></td><td></td><td><span class="short-name">인경</span></td><td><span class="short-name">인경</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">예진</span></td></tr><tr class="date-row"><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">야곱</span></td><td><span class="short-name">야곱</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+<tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td class="holiday-day" colspan="2"><strong>1<span class="holiday">삼일절</span></strong></td><td class="holiday-day" colspan="2"><strong>2<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1"><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td></td><td></td><td></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td></tr><tr class="team2"><td><span class="short-name">증산</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td><td><span class="short-name">신성</span></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1"><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">성효</span></td><td><span class="short-name">성효</span></td><td><span class="short-name">다불</span></td></tr><tr class="team2"><td></td><td></td><td></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">희경</span></td><td><span class="short-name">상진</span></td><td><span class="short-name">상진</span></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">동곡</span></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">인형</span></td><td><span class="short-name">인형</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td></td><td></td><td></td><td><span class="short-name">남산</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td></td><td></td><td></td><td><span class="short-name">양지</span></td><td></td><td><span class="short-name">인경</span></td><td><span class="short-name">인경</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">예진</span></td></tr><tr class="date-row"><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">야곱</span></td><td><span class="short-name">야곱</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
 <span><span class="color-box team1-color"></span>1팀</span>
 <span><span class="color-box team2-color"></span>2팀</span>
-</div><div class="today-overlay" style="left: 1364.94px; top: 525.078px; width: 272.688px; height: 145.594px;"></div></div>
+</div></div>
 <div class="month-frame"><h2>2026년 4월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">철인</span></td></tr><tr class="date-row"><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">증산</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">창연</span></td><td><span class="short-name">청수</span></td></tr><tr class="team2"><td><span class="short-name">철인</span></td><td><span class="short-name">철인</span></td><td></td><td></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td></tr><tr class="team1"><td><span class="short-name">청수</span></td><td></td><td></td><td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td><td><span class="short-name">다불</span></td><td></td><td></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td><span class="short-name">은혜</span></td><td></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td></tr><tr class="team1"><td><span class="short-name">형성</span></td><td><span class="short-name">형성</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="offday-text">상진</span></td><td><span class="offday-text">상진</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">인경</span></td><td><span class="short-name">인경</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td><span class="short-name">두석</span></td><td></td><td></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -576,20 +511,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 5월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td class="holiday-day" colspan="2"><strong>1<span class="holiday">근로자의 날</span></strong></td><td colspan="2"><strong>2</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td><td><span class="short-name">재선</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td class="holiday-day" colspan="2"><strong>5<span class="holiday">어린이날</span></strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td></tr><tr class="team1"><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td><span class="short-name">선진</span></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td></tr><tr class="team1"><td></td><td></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td></tr><tr class="date-row"><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td></tr><tr class="team1"><td></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">청수</span></td></tr><tr class="team2"><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="date-row"><td class="holiday-day" colspan="2"><strong>24<span class="holiday">부처님 오신 날</span></strong></td><td class="holiday-day" colspan="2"><strong>25<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td></tr><tr class="team1"><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td><span class="short-name">청수</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td></tr><tr class="team2"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td><td><span class="short-name">남산</span></td></tr><tr class="date-row"><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="short-name">남산</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -599,20 +534,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 6월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td class="holiday-day" colspan="2"><strong>6<span class="holiday">현충일</span></strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">예진</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무(변경예정)</span></td><td><span class="offday-text">휴무(변경예정)</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -622,20 +557,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 7월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td></tr><tr class="date-row"><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td></tr><tr class="team1"><td></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -645,20 +580,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 8월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td class="holiday-day" colspan="2"><strong>15<span class="holiday">광복절</span></strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>16</strong></td><td class="holiday-day" colspan="2"><strong>17<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td></tr><tr class="team1"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -668,20 +603,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 9월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">두석</span></td></tr><tr class="team2"><td><span class="short-name">두석</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td class="holiday-day" colspan="2"><strong>24<span class="holiday">추석 연휴</span></strong></td><td class="holiday-day" colspan="2"><strong>25<span class="holiday">추석</span></strong></td><td class="holiday-day" colspan="2"><strong>26<span class="holiday">추석 연휴</span></strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td><span class="short-name">청호</span></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td><span class="short-name">정현</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -691,20 +626,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 10월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td class="holiday-day" colspan="2"><strong>3<span class="holiday">개천절</span></strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">우리</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>4</strong></td><td class="holiday-day" colspan="2"><strong>5<span class="holiday">대체공휴일</span></strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td class="holiday-day" colspan="2"><strong>9<span class="holiday">한글날</span></strong></td><td colspan="2"><strong>10</strong></td></tr><tr class="team1"><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td><span class="short-name">우리</span></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">인경</span></td></tr><tr class="date-row"><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td><span class="short-name">성안</span></td><td></td><td></td></tr><tr class="team2"><td><span class="short-name">인경</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="short-name">예진</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td></tr><tr class="team1"><td></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td><span class="short-name">태성</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -714,20 +649,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 11월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td colspan="2"><strong>25</strong></td><td colspan="2"><strong>26</strong></td><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td></tr><tr class="team1"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -737,20 +672,20 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 <div class="month-frame"><h2>2026년 12월 헬퍼 일정표</h2>
 <table>
 <colgroup>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
-<col>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
+<col/>
 </colgroup>
 <tbody><tr><td colspan="2"><strong>일</strong></td><td colspan="2"><strong>월</strong></td><td colspan="2"><strong>화</strong></td><td colspan="2"><strong>수</strong></td><td colspan="2"><strong>목</strong></td><td colspan="2"><strong>금</strong></td><td colspan="2"><strong>토</strong></td></tr><tr class="date-row"><td colspan="2"></td><td colspan="2"></td><td colspan="2"><strong>1</strong></td><td colspan="2"><strong>2</strong></td><td colspan="2"><strong>3</strong></td><td colspan="2"><strong>4</strong></td><td colspan="2"><strong>5</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>6</strong></td><td colspan="2"><strong>7</strong></td><td colspan="2"><strong>8</strong></td><td colspan="2"><strong>9</strong></td><td colspan="2"><strong>10</strong></td><td colspan="2"><strong>11</strong></td><td colspan="2"><strong>12</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>13</strong></td><td colspan="2"><strong>14</strong></td><td colspan="2"><strong>15</strong></td><td colspan="2"><strong>16</strong></td><td colspan="2"><strong>17</strong></td><td colspan="2"><strong>18</strong></td><td colspan="2"><strong>19</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td></tr><tr class="date-row"><td colspan="2"><strong>20</strong></td><td colspan="2"><strong>21</strong></td><td colspan="2"><strong>22</strong></td><td colspan="2"><strong>23</strong></td><td colspan="2"><strong>24</strong></td><td class="holiday-day" colspan="2"><strong>25<span class="holiday">성탄절</span></strong></td><td colspan="2"><strong>26</strong></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td></tr><tr class="team2"><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr class="date-row"><td colspan="2"><strong>27</strong></td><td colspan="2"><strong>28</strong></td><td colspan="2"><strong>29</strong></td><td colspan="2"><strong>30</strong></td><td colspan="2"><strong>31</strong></td><td colspan="2"></td><td colspan="2"></td></tr><tr class="team1"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td><span class="offday-text">휴무</span></td><td></td><td></td><td></td><td></td></tr><tr class="team2"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
 <div class="legend">
@@ -953,391 +888,144 @@ document.addEventListener('DOMContentLoaded', function(){
   check();
 })();
 </script>
+<div id="printScaleUI" style="position:fixed;bottom:82px;right:16px;background:#fff;border:1.5px solid #DDD0F8;border-radius:14px;padding:12px 14px;display:none;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(120,90,180,.18);z-index:999997;font-size:12px;color:#5c4e8a;min-width:148px;">
+  <div style="font-weight:700;font-size:13px;">인쇄 배율</div>
+  <div style="display:flex;align-items:center;gap:8px;width:100%;">
+    <button onclick="changePrintScale(-0.05)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #DDD0F8;background:#F3EFF9;color:#5c4e8a;font-size:17px;font-weight:700;cursor:pointer;line-height:1;padding:0;">−</button>
+    <span id="printScaleLabel" style="flex:1;text-align:center;font-weight:700;font-size:15px;">100%</span>
+    <button onclick="changePrintScale(0.05)" style="width:28px;height:28px;border-radius:50%;border:1.5px solid #DDD0F8;background:#F3EFF9;color:#5c4e8a;font-size:17px;font-weight:700;cursor:pointer;line-height:1;padding:0;">+</button>
+  </div>
+  <input type="range" id="printScaleRange" min="40" max="200" value="100" oninput="setPrintScaleFromRange(this.value)" style="width:100%;accent-color:#7c5cbf;cursor:pointer;">
+  <button onclick="doActualPrint()" style="width:100%;padding:8px;background:#7c5cbf;color:#fff;border:none;border-radius:9px;font-weight:700;cursor:pointer;font-size:13px;">🖨 인쇄</button>
+  <button onclick="document.getElementById('printScaleUI').style.display='none'" style="width:100%;padding:5px;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;">취소</button>
+</div>
 <button aria-label="인쇄 메뉴 열기" id="printFab" title="프린트" type="button">🖨️</button>
-<div aria-modal="true" id="printOverlay" role="dialog">
-<div class="panel">
-<h3>출력할 달 선택</h3>
-<p>입력 또는 목록에서 선택하세요. 예: <code>2026-03</code></p>
-<div class="row">
-<input id="printMonthInput" placeholder="YYYY-MM 또는 YYYY.M" type="text">
-<button id="printGoBtn" type="button">인쇄</button>
-<button class="ghost" id="printCancelBtn" type="button">닫기</button>
-</div>
-<div class="list" id="printMonthList"></div>
-<div class="row" style="margin-top:12px; justify-content: space-between;">
-<button class="ghost" id="printCurrentViewportBtn" title="현재 보이는 영역 추정" type="button">현재 화면 인쇄</button>
-<button class="ghost" id="printWholeBtn" type="button">전체 인쇄</button>
-</div>
-</div>
-</div>
-<script id="print-overlay-logic">
-(function(){
-  function $id(id){ return document.getElementById(id); }
-  function textHasYearMonth(t){
-    if(!t) return null;
-    const m = t.replace(/\s+/g,' ').match(/(\d{4})\s*년\s*(\d{1,2})\s*월/);
-    return m ? [m[1], String(parseInt(m[2],10))] : null;
-  }
-  function findAllMonthCandidates(){
-    const set = new Map(); // key "YYYY-MM" -> {y,m,el,label}
-    const nodes = Array.from(document.querySelectorAll('h1,h2,h3,[data-month],[id]'));
-    nodes.forEach(el => {
-      let y=null,m=null,label=null;
-      // 1) h 태그 한국어 포맷
-      const hm = textHasYearMonth(el.textContent || '');
-      if(hm){ y=hm[0]; m=hm[1]; label = `${y}년 ${m}월`; }
-      // 2) data-month 속성
-      if(!y && el.hasAttribute('data-month')){
-        const v = String(el.getAttribute('data-month'));
-        const mm = v.match(/(\d{4})[-/.](\d{1,2})/);
-        if(mm){ y=mm[1]; m=String(parseInt(mm[2],10)); label = `${y}년 ${m}월`; }
-      }
-      // 3) id에 연월 포함
-      if(!y && el.id){
-        const im = el.id.match(/(20\d{2}).*?([01]?\d)\b/);
-        if(im){ y=im[1]; m=String(parseInt(im[2],10)); label = `${y}년 ${m}월`; }
-      }
-      if(y && m){
-        const key = `${y}-${m.padStart(2,'0')}`;
-        if(!set.has(key)){
-          set.set(key, {y, m, el, label});
-        }
-      }
-    });
-    return Array.from(set.values()).sort((a,b)=> (a.y+a.m.padStart(2,'0')).localeCompare(b.y+b.m.padStart(2,'0')));
-  }
-  function findMonthFrameByYM(y, m){
-    // 1) 우선 .month-frame 내 제목 검색
-    const label = `${y}년 ${parseInt(m,10)}월`;
-    const monthFrames = Array.from(document.querySelectorAll('.month-frame'));
-    for(const fr of monthFrames){
-      const h = fr.querySelector('h1,h2,h3');
-      if(h && (h.textContent||'').includes(label)) return fr;
-    }
-    // 2) 제목 노드 자체가 후보인 경우
-    const heads = Array.from(document.querySelectorAll('h1,h2,h3'));
-    for(const h of heads){
-      if((h.textContent||'').includes(label)){
-        // 헤딩에서 섹션을 추정: 부모 중 block container
-        let p = h.parentElement;
-        while(p && p !== document.body){
-          const cs = getComputedStyle(p);
-          if(cs.display !== 'inline' && p.offsetHeight > 200){ return p; }
-          p = p.parentElement;
-        }
-        return h; // 최후 수단
-      }
-    }
-    // 3) data-month / id 기반 요소
-    const generic = document.querySelector(`[data-month*="${y}"][data-month*="${String(m).padStart(2,'0')}"]`)
-                  || document.querySelector(`[id*="${y}"][id*="${String(m).padStart(2,'0')}"]`);
-    if(generic){
-      let p = generic;
-      while(p && p !== document.body){
-        const cs = getComputedStyle(p);
-        if(cs.display !== 'inline' && p.offsetHeight > 200){ return p; }
-        p = p.parentElement;
-      }
-      return generic;
-    }
-    return null;
-  }
-  function clearTargets(){
-    document.querySelectorAll('.print-target').forEach(el => el.classList.remove('print-target'));
-    document.body.classList.remove('print-mode');
-  }
-  function printElement(el) {
-    if (!el) { window.print(); return; }
 
-    // 대상 표시
-    clearTargets();
-    el.classList.add('print-target');
-    document.body.classList.add('print-mode');
+</div>
 
-    // 이전 zoom 초기화
+
+<script id="print-scale-ui">
+function setPrintScaleFromRange(val){
+  var scale = parseInt(val)/100;
+  document.documentElement.style.setProperty('--print-zoom', String(scale));
+  document.getElementById('printScaleLabel').textContent = val+'%';
+}
+function changePrintScale(delta){
+  var cur = parseFloat(document.documentElement.style.getPropertyValue('--print-zoom')||'1');
+  var next = Math.min(2.0, Math.max(0.4, Math.round((cur+delta)*100)/100));
+  document.documentElement.style.setProperty('--print-zoom', String(next));
+  var pct = Math.round(next*100);
+  document.getElementById('printScaleLabel').textContent = pct+'%';
+  document.getElementById('printScaleRange').value = pct;
+}
+function doActualPrint(){
+  document.getElementById('printScaleUI').style.display='none';
+  var activeFrame = document.querySelector('.month-frame.active');
+  if(!activeFrame){ printElement(null); return; }
+
+  // 제목을 month-frame 맨 앞에 임시 삽입
+  var titleEl = document.createElement('div');
+  titleEl.id = '__printTitleInjected';
+  titleEl.style.cssText = 'text-align:center;font-size:18px;font-weight:800;color:#5c4e8a;padding:10px 0 6px;width:100%;';
+  var navTitle = document.getElementById('navTitle');
+  titleEl.textContent = navTitle ? navTitle.textContent : '';
+  activeFrame.insertBefore(titleEl, activeFrame.firstChild);
+
+  printElement(activeFrame);
+
+  // 제목 제거는 printElement의 restoreAll 에서 처리
+}
+</script>
+
+<script id="print-logic">
+// 전역 노출 — doActualPrint 등 외부 함수에서 호출 가능
+function clearTargets(){
+  document.body.classList.remove('print-mode');
+  document.querySelectorAll('.print-target').forEach(function(el){
+    el.classList.remove('print-target');
     el.style.removeProperty('zoom');
     el.style.removeProperty('transform');
+  });
+}
 
-    // 잠깐 기다렸다가 크기 측정 (display 변경 반영)
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        try {
-          // A4 landscape: 297 x 210mm, 여백 6mm
-          var DPI    = 96;
-          var availW = (297 - 12) / 25.4 * DPI;  // ≈ 1099px
-          var availH = (210 - 12) / 25.4 * DPI;  // ≈ 756px
+function printElement(el){
+  if(!el){ window.print(); return; }
+  clearTargets();
+  el.classList.add('print-target');
+  document.body.classList.add('print-mode');
+  if(!document.documentElement.style.getPropertyValue('--print-zoom')){
+    document.documentElement.style.setProperty('--print-zoom', '1');
+  }
 
-          // 현재 요소 실제 크기 (scroll 포함)
-          var w = el.scrollWidth  || el.offsetWidth;
-          var h = el.scrollHeight || el.offsetHeight;
+  var done = false;
+  function restoreAll(){
+    if(done) return;
+    done = true;
+    // 클래스 & CSS 변수 복구
+    clearTargets();
+    document.documentElement.style.removeProperty('--print-zoom');
+    // 주입된 제목 제거
+    var t = document.getElementById('__printTitleInjected');
+    if(t && t.parentNode) t.parentNode.removeChild(t);
+    // 이벤트 정리
+    window.removeEventListener('afterprint', restoreAll);
+    window.removeEventListener('focus',      onFocus);
+    try { mq.removeEventListener('change', onMQ); } catch(e){}
+  }
 
-          if (w > 0 && h > 0) {
-            // 가로·세로 모두 꽉 채우는 비율 계산
-            var scaleW = availW / w;
-            var scaleH = availH / h;
-            var scale  = Math.min(scaleW, scaleH) * 0.98; // 0.98: 경계선 잘림 방지
-            scale = Math.min(3.0, Math.max(0.4, scale));
-            el.style.zoom = String(scale);
-          }
-        } catch(e) {
-          el.style.zoom = '1';
-        }
+  // ① afterprint — Chrome·Edge·Firefox
+  window.addEventListener('afterprint', restoreAll);
 
-        // cleanup
-        var cleanup = function() {
-          el.style.removeProperty('zoom');
-          el.style.removeProperty('transform');
-          clearTargets();
-          window.removeEventListener('afterprint', cleanup);
-        };
-        window.addEventListener('afterprint', cleanup);
-        window.print();
-      });
-    });
-  }
-  function computeGlobalScale(){
-    try{
-      var DPI = 96;
-      var A4Wpx = (297/25.4)*DPI;
-      var A4Hpx = (210/25.4)*DPI;
-      var margin = 8; // mm (increased to avoid clipped borders)
-      var availW = A4Wpx - (margin/25.4*DPI*2);
-      var availH = A4Hpx - (margin/25.4*DPI*2);
-      var items = findAllMonthCandidates();
-      if(!items.length) return null;
-      var minScale = 1.0;
-      for (var i=0;i<items.length;i++){
-        var y = items[i].y, m = items[i].m;
-        var fr = findMonthFrameByYM(y,m);
-        if(!fr) continue;
-        // 임시로 visiblility 확보(숨겨진 경우 치수 0 방지)
-        var prevDisp = fr.style.display || '';
-        if (getComputedStyle(fr).display === 'none') fr.style.display = 'block';
-        var rect = fr.getBoundingClientRect();
-        var w = Math.max(fr.scrollWidth || 0, rect.width || 0);
-        var h = Math.max(fr.scrollHeight || 0, rect.height || 0);
-        // 원래 display 복구
-        fr.style.display = prevDisp;
-        if (w>0 && h>0){
-          var sw = availW / w;
-          var sh = availH / h;
-          var s = Math.min(sw, sh);
-          if (s < minScale) minScale = s;
-        }
-      }
-      // 안전 범위 클램프 & 소폭 확대
-      var safe = Math.min(1.0, Math.max(0.6, minScale * 0.995));
-      return safe;
-    }catch(e){ return null; }
-  }
-  function openOverlay(){
-    const ov = $id('printOverlay');
-    if (!window.__globalPrintScale){
-      var g = computeGlobalScale();
-      if (g){ window.__globalPrintScale = g; document.documentElement.style.setProperty('--print-scale', String(g)); }
-    }
-    const list = $id('printMonthList');
-    list.innerHTML = '';
-    const items = findAllMonthCandidates();
-    if(items.length){
-      items.forEach(({y,m,label})=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.textContent = label;
-        div.onclick = () => {
-          const fr = findMonthFrameByYM(y,m);
-          if(!fr){ alert(`${y}년 ${m}월 영역을 찾지 못했습니다. 전체 인쇄로 진행합니다.`); printElement(null); return; }
-          printElement(fr);
-          closeOverlay();
-        };
-        list.appendChild(div);
-      });
-    } else {
-      const none = document.createElement('div');
-      none.style.color = '#888';
-      none.textContent = '감지된 월 제목이 없습니다. 아래 버튼으로 전체/현재화면 인쇄를 이용하세요.';
-      list.appendChild(none);
-    }
-    ov.classList.add('show-overlay');
-    $id('printMonthInput').focus();
-  }
-  function closeOverlay(){ $id('printOverlay').classList.remove('show-overlay'); }
-  function parseInputValue(v){
-    if(!v) return null;
-    const m = v.trim().match(/^(\d{4})\s*[-./]?\s*(\d{1,2})$/);
-    return m ? [m[1], String(parseInt(m[2],10))] : null;
-  }
-  // Expose entry points
-  window.__openPrintUI = openOverlay;
-  window.__printWhole = () => printElement(null);
-  window.__printCurrentViewport = () => {
-    // 화면 중심의 가장 큰 블록 요소를 찾아서 인쇄
-    const x = window.innerWidth/2, y= window.innerHeight/2;
-    const el = document.elementFromPoint(x,y);
-    let p = el;
-    let best = el, bestArea = 0;
-    while(p && p !== document.body){
-      const r = p.getBoundingClientRect();
-      const area = Math.max(0, Math.min(r.right, window.innerWidth) - Math.max(r.left, 0)) * Math.max(0, Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0));
-      if(area > bestArea && getComputedStyle(p).display !== 'inline'){ best = p; bestArea = area; }
-      p = p.parentElement;
-    }
-    printElement(best || el);
-  };
-  // Wire overlay buttons (delegated after DOM ready)
+  // ② matchMedia('print') → false 전환 — Safari·구형 브라우저
+  var mq = window.matchMedia('print');
+  function onMQ(e){ if(!e.matches) restoreAll(); }
+  try { mq.addEventListener('change', onMQ); }
+  catch(e){ try { mq.addListener(onMQ); } catch(e2){} }
+
+  // ③ window focus 복귀 — 인쇄창 닫고 브라우저로 돌아올 때
+  function onFocus(){ setTimeout(restoreAll, 100); }
+  window.addEventListener('focus', onFocus);
+
+  window.print();
+}
+
+// FAB 클릭 → 배율 패널 토글
+(function bindFab(){
   function bind(){
-    const ov = $id('printOverlay');
-    if(ov){
-      ov.addEventListener('click', function(e){
-        if(e.target === ov) closeOverlay();
-      });
-    }
-    const go = $id('printGoBtn');
-    const cancel = $id('printCancelBtn');
-    const whole = $id('printWholeBtn');
-    const cur = $id('printCurrentViewportBtn');
-    const inp = $id('printMonthInput');
-    if(go) go.onclick = () => {
-      const res = parseInputValue(inp.value);
-      if(!res){ alert('형식 예: 2026-03'); return; }
-      const [y,m] = res;
-      const fr = findMonthFrameByYM(y,m);
-      if(!fr){ alert(`${y}년 ${m}월 영역을 찾지 못했습니다. 전체 인쇄로 진행합니다.`); printElement(null); closeOverlay(); return; }
-      printElement(fr); closeOverlay();
+    var fab = document.getElementById('printFab');
+    if(!fab) return;
+    fab.onclick = function(){
+      var ui = document.getElementById('printScaleUI');
+      if(!ui) return;
+      if(ui.style.display === 'flex'){
+        ui.style.display = 'none';
+      } else {
+        var activeFrame = document.querySelector('.month-frame.active');
+        if(activeFrame){
+          var PX_PER_MM = 96/25.4;
+          var availW = (297-10)*PX_PER_MM;
+          var availH = (210-10)*PX_PER_MM;
+          var w = activeFrame.scrollWidth||activeFrame.offsetWidth||1;
+          var h = activeFrame.scrollHeight||activeFrame.offsetHeight||1;
+          var autoScale = Math.min(availW/w, availH/h);
+          autoScale = Math.min(2.0, Math.max(0.4, autoScale));
+          var pct = Math.round(autoScale*100);
+          document.getElementById('printScaleRange').value = pct;
+          document.getElementById('printScaleLabel').textContent = pct+'%';
+          document.documentElement.style.setProperty('--print-zoom', String(autoScale));
+        }
+        ui.style.display = 'flex';
+      }
     };
-    if(cancel) cancel.onclick = closeOverlay;
-    if(whole) whole.onclick = () => { printElement(null); closeOverlay(); };
-    if(cur) cur.onclick = () => { window.__printCurrentViewport(); closeOverlay(); };
   }
   if(document.readyState === 'loading'){
     document.addEventListener('DOMContentLoaded', bind);
-  } else { bind(); }
-  // Ensure FAB opens overlay
-  const fab = document.getElementById('printFab');
-  if(fab){ fab.onclick = function(){ window.__openPrintUI(); }; }
+  } else {
+    bind();
+  }
 })();
 </script>
-<script id="print-auto-fit-a4">
-(function(){
-  'use strict';
-  // These MUST match the @page settings in #print-unified
-  var PAGE_W_MM = 297;   // A4 landscape width
-  var PAGE_H_MM = 210;   // A4 landscape height
-  var MARGIN_MM = 6;     // @page margin
-  var FUDGE    = 0.97;   // 페이지 꽉 채우기
-  var MIN_SCALE = 0.55;  // 6주 달 축소 허용
-  var MAX_SCALE = 3.00;  // 확대 허용 (A4 꽉 채움)
-  function mmToPx(mm){
-    var probe = document.createElement('div');
-    probe.style.position = 'fixed';
-    probe.style.left = '-10000px';
-    probe.style.top = '0';
-    probe.style.width = mm + 'mm';
-    probe.style.height = '0';
-    document.body.appendChild(probe);
-    var px = probe.getBoundingClientRect().width || 0;
-    probe.parentNode.removeChild(probe);
-    return px;
-  }
-  function getAvailablePx(){
-    // Uses current render context (screen/print) for mm->px mapping
-    var pageW = mmToPx(PAGE_W_MM);
-    var pageH = mmToPx(PAGE_H_MM);
-    var margin = mmToPx(MARGIN_MM);
-    return {
-      w: Math.max(0, pageW - 2 * margin),
-      h: Math.max(0, pageH - 2 * margin)
-    };
-  }
-  function supportsZoom(){
-    try{
-      return (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('zoom', '1'));
-    }catch(e){
-      return false;
-    }
-  }
-  function clearScale(el){
-    if(!el) return;
-    el.style.removeProperty('zoom');
-    el.style.removeProperty('transform');
-    el.style.removeProperty('transform-origin');
-  }
-  function measureUnscaled(el){
-    if(!el) return {w:0, h:0};
-    // Temporarily remove any scale for accurate measurement
-    var prevZoom = el.style.zoom;
-    var prevTransform = el.style.transform;
-    var prevOrigin = el.style.transformOrigin;
-    el.style.zoom = '';
-    el.style.transform = 'none';
-    el.style.transformOrigin = '';
-    // Force layout
-    var rect = el.getBoundingClientRect();
-    var w = Math.max(el.scrollWidth || 0, rect.width || 0);
-    var h = Math.max(el.scrollHeight || 0, rect.height || 0);
-    // Restore (we will re-apply final scale later)
-    el.style.zoom = prevZoom;
-    el.style.transform = prevTransform;
-    el.style.transformOrigin = prevOrigin;
-    return {w:w, h:h};
-  }
-  function computeScale(el, avail){
-    var m = measureUnscaled(el);
-    if(!m.w || !m.h || !avail.w || !avail.h) return 1;
-    var sw = avail.w / m.w;
-    var sh = avail.h / m.h;
-    var s = Math.min(sw, sh) * FUDGE;
-    s = Math.min(MAX_SCALE, Math.max(MIN_SCALE, s));
-    return s;
-  }
-  function applyScale(el, scale){
-    if(!el) return;
-    if (supportsZoom()){
-      el.style.zoom = String(scale);
-      el.style.transform = 'none';
-      el.style.transformOrigin = '';
-    } else {
-      // Fallback: visual fit (note: some browsers may still paginate by unscaled size)
-      el.style.zoom = '';
-      el.style.transformOrigin = 'top left';
-      el.style.transform = 'scale(' + scale + ')';
-    }
-  }
-  function getTargets(){
-    if (document.body.classList.contains('print-mode')){
-      var t = document.querySelector('.print-target');
-      return t ? [t] : [];
-    }
-    // Whole document: fit each month-frame into 1 page
-    return Array.prototype.slice.call(document.querySelectorAll('.month-frame'));
-  }
-  function beforePrint(){
-    var avail = getAvailablePx();
-    var targets = getTargets();
-    // Clear any previous scaling first
-    targets.forEach(clearScale);
-    // Compute then apply (2-pass to avoid earlier zoom affecting later measurements)
-    var scales = targets.map(function(el){ return computeScale(el, avail); });
-    targets.forEach(function(el, idx){
-      applyScale(el, scales[idx]);
-    });
-    // Also expose the last computed scale for debugging if needed
-    if (targets.length === 1){
-      document.documentElement.style.setProperty('--print-scale', String(scales[0]));
-    } else {
-      document.documentElement.style.removeProperty('--print-scale');
-    }
-  }
-  function afterPrint(){
-    // Clean up so screen view is unaffected
-    var all = document.querySelectorAll('.month-frame, .print-target');
-    all.forEach(clearScale);
-    document.documentElement.style.removeProperty('--print-scale');
-  }
-  window.addEventListener('beforeprint', beforePrint);
-  window.addEventListener('afterprint', afterPrint);
-})();
-</script>
+
 <script id="month-nav-logic">
 (function() {
   var frames = Array.prototype.slice.call(document.querySelectorAll('.month-frame'));
@@ -1354,8 +1042,9 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
 
-  // 탭 생성
+  // 탭 생성 (혹시 이전 저장 시 탭이 남아있으면 초기화)
   var tabContainer = document.getElementById('monthTabs');
+  tabContainer.innerHTML = '';
   var tabs = [];
   frames.forEach(function(fr, i) {
     var h2 = fr.querySelector('h2');
@@ -1379,7 +1068,8 @@ document.addEventListener('DOMContentLoaded', function(){
     tabs[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     // 제목 업데이트
     var h2 = frames[current].querySelector('h2');
-    document.getElementById('navTitle').textContent = h2 ? h2.textContent.trim() : '';
+    var titleText = h2 ? h2.textContent.trim() : '';
+    document.getElementById('navTitle').textContent = titleText;
   }
 
   document.getElementById('navPrev').addEventListener('click', function() {
@@ -1422,6 +1112,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   }, { passive: true });
 
+  // 혹시 이전 저장에서 남은 edit-mode 상태 초기화
+  document.body.classList.remove('edit-mode');
+  document.querySelectorAll('.month-frame').forEach(function(fr) {
+    fr.classList.remove('active');
+  });
+
   // 초기화
   goTo(current);
 })();
@@ -1456,17 +1152,17 @@ document.addEventListener('DOMContentLoaded', function(){
 #btnClear{background:#f0f0f0;color:#555;}
 #btnClose{background:none;color:#aaa;font-size:12px;margin-bottom:0;}
 #editBanner{display:none;position:fixed;top:0;left:0;right:0;background:#e63946;color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:600;z-index:999997;}
-body.edit-mode #editBanner{display:block;}
+body.edit-mode #editBanner{display:block !important;}
 body.edit-mode tr.team1 td,body.edit-mode tr.team2 td,body.edit-mode{cursor:pointer!important;}
 body.edit-mode tr.team1 td:hover,body.edit-mode tr.team2 td:hover,body.edit-mode:hover{outline:2px dashed #1a1a2e!important;outline-offset:-2px;background:rgba(26,26,46,.07)!important;}
 #saveHtmlBtn{display:none;position:fixed;bottom:80px;left:16px;background:#238636;color:#fff;border:none;border-radius:99px;padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);z-index:999998;}
-body.edit-mode #saveHtmlBtn{display:block;}
+body.edit-mode #saveHtmlBtn{display:block !important;}
 </style>
-<div id="editBanner" style="display: none;">✏ 편집 모드 — 셀을 클릭해서 수정하세요</div>
-<button id="editorFab" class="active">✕</button>
+<div id="editBanner">✏ 편집 모드 — 셀을 클릭해서 수정하세요</div>
+<button id="editorFab">✏</button>
 <button id="saveHtmlBtn">☁ GitHub 저장</button>
 
-<div id="ghModal" style="position: fixed; inset: 0px; background: rgba(0, 0, 0, 0.5); display: none; align-items: center; justify-content: center; z-index: 9999999; backdrop-filter: blur(2px);">
+<div id="ghModal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:9999999;backdrop-filter:blur(2px);">
   <div style="background:#fff;border-radius:20px;padding:24px 22px;width:min(360px,92vw);box-shadow:0 16px 48px rgba(0,0,0,.2);">
     <div style="font-size:17px;font-weight:800;color:#1a1a2e;margin-bottom:6px;">GitHub에 저장</div>
     <div style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.6;">
@@ -1477,19 +1173,23 @@ body.edit-mode #saveHtmlBtn{display:block;}
     <div style="font-size:13px;font-weight:600;color:#238636;background:#f0fff4;border-radius:8px;padding:8px 12px;margin-bottom:14px;font-family:monospace;">djnaknong/djnaknongbuild1</div>
     <div style="font-size:12px;color:#888;margin-bottom:4px;">Personal Access Token</div>
     <div style="display:flex;gap:6px;margin-bottom:8px;">
-      <input id="ghTokenInput" type="password" placeholder="ghp_xxxxxxxxxxxx" style="flex:1;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;outline:none;font-family:monospace;">
-      <button id="ghTokenToggle" onclick="(function(){var i=document.getElementById('ghTokenInput');i.type=i.type==='password'?'text':'password';})()" style="padding:0 12px;border:1.5px solid #ddd;border-radius:10px;background:#f8f8f8;cursor:pointer;font-size:14px;">👁</button>
+      <input id="ghTokenInput" type="password" placeholder="ghp_xxxxxxxxxxxx"
+        style="flex:1;padding:10px 12px;border:1.5px solid #ddd;border-radius:10px;font-size:13px;outline:none;font-family:monospace;"/>
+      <button id="ghTokenToggle" onclick="(function(){var i=document.getElementById('ghTokenInput');i.type=i.type==='password'?'text':'password';})()"
+        style="padding:0 12px;border:1.5px solid #ddd;border-radius:10px;background:#f8f8f8;cursor:pointer;font-size:14px;">👁</button>
     </div>
     <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:#666;margin-bottom:16px;cursor:pointer;">
-      <input type="checkbox" id="ghSaveToken" checked="" style="width:14px;height:14px;cursor:pointer;">
+      <input type="checkbox" id="ghSaveToken" checked style="width:14px;height:14px;cursor:pointer;"/>
       토큰 브라우저에 저장 (다음에 자동 입력)
     </label>
-    <div id="ghStatus" style="font-size: 12px; min-height: 18px; margin-bottom: 10px; text-align: center; color: rgb(136, 136, 136);">⏳ 업로드 중...</div>
+    <div id="ghStatus" style="font-size:12px;min-height:18px;margin-bottom:10px;text-align:center;"></div>
     <div style="display:flex;gap:8px;">
-      <button id="ghUploadBtn" style="flex:1;padding:11px;background:#238636;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" disabled="">
+      <button id="ghUploadBtn"
+        style="flex:1;padding:11px;background:#238636;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;">
         ☁ 업로드
       </button>
-      <button onclick="document.getElementById('ghModal').style.display='none';" style="padding:11px 16px;background:#f0f0f0;color:#555;border:none;border-radius:10px;font-size:13px;cursor:pointer;">
+      <button onclick="document.getElementById('ghModal').style.display='none';"
+        style="padding:11px 16px;background:#f0f0f0;color:#555;border:none;border-radius:10px;font-size:13px;cursor:pointer;">
         취소
       </button>
     </div>
@@ -1499,17 +1199,17 @@ body.edit-mode #saveHtmlBtn{display:block;}
   </div>
 </div>
 
-<div id="pwModal" class=""><div id="pwBox">
+<div id="pwModal"><div id="pwBox">
 <h3>편집 모드</h3><p>비밀번호를 입력해주세요</p>
-<input id="pwInput" type="password" placeholder="••••••" maxlength="20" autocomplete="off" class="">
-<div id="pwError">비밀번호가 틀렸습니다</div>
+<input id="pwInput" type="password" placeholder="••••••" maxlength="20" autocomplete="off"/>
+<div id="pwError"></div>
 <button id="pwConfirm">확인</button>
 <button id="pwCancel">취소</button>
 </div></div>
-<div id="cellPopup" style="left: 1501.28px; top: 718.875px; display: none;">
-<h4 id="popupLabel">1팀 · 현재: 없음</h4>
-<div id="colorPreview"><span id="previewSwatch" style="color: rgb(17, 24, 39);">울림</span><span id="previewLabel">평일</span></div>
-<input id="cellInput" type="text" placeholder="이름 입력..." maxlength="10">
+<div id="cellPopup">
+<h4 id="popupLabel">셀 편집</h4>
+<div id="colorPreview"><span id="previewSwatch">—</span><span id="previewLabel">미리보기</span></div>
+<input id="cellInput" type="text" placeholder="이름 입력..." maxlength="10"/>
 <button class="popBtn" id="btnApply">✓ 적용 (Enter)</button>
 <button class="popBtn" id="btnOffday">🟣 휴무 처리</button>
 <button class="popBtn" id="btnClear">지우기</button>
@@ -1604,9 +1304,28 @@ document.getElementById('ghUploadBtn').addEventListener('click', async function(
     document.getElementById('editBanner').style.display = 'none';
     document.getElementById('ghModal').style.display    = 'none';
     document.getElementById('cellPopup').style.display  = 'none';
+    // 저장 전: edit-mode 클래스 임시 제거 (저장된 파일에 편집모드 상태 포함 방지)
+    var hadEditMode = document.body.classList.contains('edit-mode');
+    document.body.classList.remove('edit-mode');
+    // active 월 기억 후 class 임시 제거 (중복 탭 방지)
+    var activeFrame = document.querySelector('.month-frame.active');
+    var activeTab   = document.querySelector('.month-tab.active');
+    if (activeFrame) activeFrame.classList.remove('active');
+    if (activeTab)   activeTab.classList.remove('active');
+    // 탭 컨테이너 비우기 (재생성 방지)
+    var tabsCont = document.getElementById('monthTabs');
+    var tabsHTML = tabsCont ? tabsCont.innerHTML : '';
+    if (tabsCont) tabsCont.innerHTML = '';
+
     var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+    // 상태 복구
     document.getElementById('editBanner').style.display = '';
     document.getElementById('ghModal').style.display    = 'flex';
+    if (hadEditMode) document.body.classList.add('edit-mode');
+    if (activeFrame) activeFrame.classList.add('active');
+    if (activeTab)   activeTab.classList.add('active');
+    if (tabsCont) tabsCont.innerHTML = tabsHTML;
 
     // 3. Base64 인코딩
     var b64 = btoa(unescape(encodeURIComponent(html)));
