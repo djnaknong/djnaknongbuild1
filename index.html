@@ -122,7 +122,15 @@ body {
 
 /* ── 월 제목 */
 .month-frame > h2 {
-  display: none;
+  margin: 0;
+  padding: 10px 18px 10px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #5c4e8a;
+  background: linear-gradient(90deg, #F5F0FF 0%, #FFF5F0 100%);
+  border-bottom: 1.5px solid #E8E2F5;
+  text-align: center;
 }
 
 /* ── 테이블 */
@@ -1436,10 +1444,10 @@ document.addEventListener('DOMContentLoaded', function(){
   document.addEventListener('touchend', function(e) {
     var dx = e.changedTouches[0].clientX - touchStartX;
     var dy = e.changedTouches[0].clientY - touchStartY;
-    // 가로 스와이프만 처리 (세로 스크롤과 구분: 가로 이동이 세로보다 클 때)
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (dx < 0) goTo(current + 1); // 왼쪽으로 밀기 → 다음 달
-      else        goTo(current - 1); // 오른쪽으로 밀기 → 이전 달
+    // 세로 스와이프 처리 (세로 이동이 가로보다 클 때)
+    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
+      if (dy < 0) goTo(current + 1); // 위로 밀기 → 다음 달
+      else        goTo(current - 1); // 아래로 밀기 → 이전 달
     }
   }, { passive: true });
 
