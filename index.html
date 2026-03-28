@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=" 1""="" name="viewport">
+<html lang="ko"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1" name="viewport">
 <title>2026 헬퍼 일정표</title>
 <style>
 /* =====================================================
@@ -306,19 +306,28 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
    반응형 — 모바일
    ================================================================ */
 @media (max-width: 768px) {
-  body { padding: 0; }
-  .month-frame { border-radius: 16px; margin-bottom: 16px; }
+  html { overflow: auto; height: auto; }
+  body { padding: 0; height: auto; min-height: 100vh; overflow: auto; }
+  .month-frame {
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow-x: auto;           /* ← 가로 스크롤 허용 */
+    -webkit-overflow-scrolling: touch;
+  }
   .month-frame > h2 { font-size: 14px; padding: 11px 14px 10px; }
 
-  th, td          { height: 28px; min-height: 28px; font-size: 10.5px; }
-  tbody > tr:first-child td    { height: 26px; }
-  tbody > tr:first-child strong { font-size: 11px; }
-  tbody tr.date-row td         { height: 34px; }
-  tbody tr.date-row td strong  { font-size: 12px; }
-  tr.team1 td, tr.team2 td { height: 27px; }
-  .short-name { font-size: 11.5px; }
-  .long-name  { font-size: 10px; }
-  .offday-text { font-size: 10.5px; }
+  /* 테이블 최소 너비 — 14열이 읽을 수 있는 크기 유지 */
+  table { min-width: 700px; }
+
+  th, td          { height: 30px; min-height: 30px; font-size: 12px; }
+  tbody > tr:first-child td    { height: 28px; }
+  tbody > tr:first-child strong { font-size: 12px; }
+  tbody tr.date-row td         { height: 36px; }
+  tbody tr.date-row td strong  { font-size: 13px; }
+  tr.team1 td, tr.team2 td { height: 30px; }
+  .short-name { font-size: 13px; }
+  .long-name  { font-size: 11px; }
+  .offday-text { font-size: 12px; }
   .legend { padding: 8px 14px 4px; font-size: 11px; }
 }
 
@@ -326,12 +335,16 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
   body { padding: 0; }
   .month-frame { border-radius: 12px; }
   .month-frame > h2 { font-size: 13px; padding: 9px 10px; }
-  th, td          { height: 24px; min-height: 24px; font-size: 9.5px; }
-  tbody tr.date-row td         { height: 30px; }
-  tbody tr.date-row td strong  { font-size: 11px; }
-  tr.team1 td, tr.team2 td { height: 23px; }
-  .short-name  { font-size: 10.5px; }
-  .offday-text { font-size: 9.5px; }
+
+  /* 480px 이하에서도 테이블 최소 너비 유지 → 가로 스크롤 */
+  table { min-width: 650px; }
+
+  th, td          { height: 28px; min-height: 28px; font-size: 11.5px; }
+  tbody tr.date-row td         { height: 34px; }
+  tbody tr.date-row td strong  { font-size: 12px; }
+  tr.team1 td, tr.team2 td { height: 28px; }
+  .short-name  { font-size: 12px; }
+  .offday-text { font-size: 11px; }
 }
 
 /* ── 인쇄 */
@@ -413,7 +426,7 @@ tr.team1 td:nth-child(14), tr.team2 td:nth-child(14) {
 </head><body class="">
 <div id="monthNav">
   <button id="navPrev">←</button>
-  <div id="navTitle">2026년 10월 헬퍼 일정표</div>
+  <div id="navTitle">2026년 3월 헬퍼 일정표</div>
   <button id="navNext">→</button>
 </div>
 <div id="monthTabs"></div>
@@ -1083,32 +1096,37 @@ function printElement(el){
     if (e.key === 'ArrowRight') goTo(current + 1);
   });
 
-  // 마우스 휠 스크롤 → 월 전환
+  // 마우스 휠 스크롤 → 월 전환 (PC에서만)
   var wheelTimer = null;
-  document.addEventListener('wheel', function(e) {
-    e.preventDefault();
-    if (wheelTimer) return; // 연속 스크롤 방지 (300ms 쿨다운)
-    if (e.deltaY > 0 || e.deltaX > 0) goTo(current + 1);
-    else                               goTo(current - 1);
-    wheelTimer = setTimeout(function() { wheelTimer = null; }, 300);
-  }, { passive: false });
+  var isMobile = window.matchMedia('(max-width: 768px)').matches;
+  if (!isMobile) {
+    document.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      if (wheelTimer) return;
+      if (e.deltaY > 0 || e.deltaX > 0) goTo(current + 1);
+      else                               goTo(current - 1);
+      wheelTimer = setTimeout(function() { wheelTimer = null; }, 300);
+    }, { passive: false });
+  }
 
-  // 터치 스와이프 → 월 전환
-  var touchStartX = 0;
-  var touchStartY = 0;
-  document.addEventListener('touchstart', function(e) {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-  }, { passive: true });
-  document.addEventListener('touchend', function(e) {
-    var dx = e.changedTouches[0].clientX - touchStartX;
-    var dy = e.changedTouches[0].clientY - touchStartY;
-    // 세로 스와이프 처리 (세로 이동이 가로보다 클 때)
-    if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
-      if (dy < 0) goTo(current + 1); // 위로 밀기 → 다음 달
-      else        goTo(current - 1); // 아래로 밀기 → 이전 달
-    }
-  }, { passive: true });
+  // 터치 스와이프 → 월 전환 (PC/태블릿에서만, 모바일은 탭·버튼 사용)
+  if (!isMobile) {
+    var touchStartX = 0;
+    var touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    document.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      // 세로 스와이프 처리 (세로 이동이 가로보다 클 때)
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 40) {
+        if (dy < 0) goTo(current + 1);
+        else        goTo(current - 1);
+      }
+    }, { passive: true });
+  }
 
   // 혹시 이전 저장에서 남은 edit-mode 상태 초기화
   document.body.classList.remove('edit-mode');
